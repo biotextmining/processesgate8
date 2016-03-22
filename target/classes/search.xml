@@ -1,0 +1,42 @@
+<robot version="1.0">
+	<transformer class="SimpleTransformer" branchtype="CASCADE" branchmergemode="ORDERED" loop="false">
+		<description>SimpleTransformer</description>
+		<param key="description">SimpleTransformer</param>
+		<param key="inputFilter"></param>
+		<transformer class="Decorator" branchtype="CASCADE" branchmergemode="ORDERED" loop="false">
+			<description>Decorator</description>
+			<param key="description">Decorator</param>
+			<param key="head"><![CDATA[http://www.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=PubMed&usehistory=y&term=]]></param>
+			<param key="inputFilter"></param>
+			<param key="tail"></param>
+		</transformer>
+		<transformer class="URLRetriever" branchtype="CASCADE" branchmergemode="ORDERED" loop="false">
+			<description>URLRetriever</description>
+			<param key="description">URLRetriever</param>
+			<param key="inputFilter"></param>
+		</transformer>
+		<transformer class="SimpleTransformer" branchtype="BRANCH_DUPLICATED" branchmergemode="ORDERED" loop="false">
+			<description>SimpleTransformer</description>
+			<param key="description">SimpleTransformer</param>
+			<param key="inputFilter"></param>
+			<transformer class="HTMLMatcher" branchtype="CASCADE" branchmergemode="ORDERED" loop="false">
+				<description>HTMLMatcher</description>
+				<param key="XPath">//webenv/text()</param>
+				<param key="description">HTMLMatcher</param>
+				<param key="inputFilter"></param>
+			</transformer>
+			<transformer class="HTMLMatcher" branchtype="CASCADE" branchmergemode="ORDERED" loop="false">
+				<description>HTMLMatcher</description>
+				<param key="XPath">//querykey/text()</param>
+				<param key="description">HTMLMatcher</param>
+				<param key="inputFilter"></param>
+			</transformer>
+			<transformer class="HTMLMatcher" branchtype="CASCADE" branchmergemode="ORDERED" loop="false">
+				<description>HTMLMatcher</description>
+				<param key="XPath">//count/text()</param>
+				<param key="description">HTMLMatcher</param>
+				<param key="inputFilter"></param>
+			</transformer>			
+		</transformer>
+	</transformer>
+</robot>
