@@ -12,8 +12,8 @@ import java.util.Set;
 import org.junit.Test;
 
 import com.silicolife.textmining.core.datastructures.corpora.CorpusCreateConfigurationImpl;
+import com.silicolife.textmining.core.datastructures.exceptions.process.InvalidConfigurationException;
 import com.silicolife.textmining.core.datastructures.init.exception.InvalidDatabaseAccess;
-import com.silicolife.textmining.core.datastructures.process.ir.configuration.IRSearchConfigurationImpl;
 import com.silicolife.textmining.core.interfaces.core.corpora.ICorpusCreateConfiguration;
 import com.silicolife.textmining.core.interfaces.core.dataaccess.exception.ANoteException;
 import com.silicolife.textmining.core.interfaces.core.document.IPublication;
@@ -31,12 +31,13 @@ import com.silicolife.textmining.ie.ner.abner.configuration.NERAbnerConfiguratio
 import com.silicolife.textmining.processes.DatabaseConnectionInit;
 import com.silicolife.textmining.processes.corpora.loaders.CorpusCreation;
 import com.silicolife.textmining.processes.ir.pubmed.PubMedSearch;
+import com.silicolife.textmining.processes.ir.pubmed.configuration.IRPubmedSearchConfigurationImpl;
 import com.silicolife.wrappergate.GateInit;
 
 public class AbnerTaggerTest {
 	
 	@Test
-	public void test() throws InvalidDatabaseAccess, ANoteException, InternetConnectionProblemException, IOException, GateException {
+	public void test() throws InvalidDatabaseAccess, ANoteException, InternetConnectionProblemException, IOException, GateException, InvalidConfigurationException {
 		
 		DatabaseConnectionInit.init("localhost","3306","createdatest","root","admin");
 		GateInit.getInstance().init("gate8",null);
@@ -51,7 +52,7 @@ public class AbnerTaggerTest {
 	}
 	
 	public static ICorpusCreateReport createCorpus() throws InvalidDatabaseAccess,
-	ANoteException, InternetConnectionProblemException {
+	ANoteException, InternetConnectionProblemException, InvalidConfigurationException {
 		IIRSearchProcessReport report = createQuery();
 		System.out.println("Create Corpus");
 		CorpusCreation creation = new CorpusCreation();
@@ -67,7 +68,7 @@ public class AbnerTaggerTest {
 	}
 
 	public static IIRSearchProcessReport createQuery() throws InvalidDatabaseAccess,
-	ANoteException, InternetConnectionProblemException {
+	ANoteException, InternetConnectionProblemException, InvalidConfigurationException {
 		System.out.println("Create Query");
 		PubMedSearch pubmedSearch = new PubMedSearch();
 		// Properties
@@ -104,7 +105,7 @@ public class AbnerTaggerTest {
 		// Article Type
 		//propeties.put("articletype", "Revision");
 
-		IIRSearchConfiguration searchConfiguration = new IRSearchConfigurationImpl(keywords , organism , queryName, propeties );
+		IIRSearchConfiguration searchConfiguration = new IRPubmedSearchConfigurationImpl(keywords , organism , queryName, propeties );
 		IIRSearchProcessReport report = pubmedSearch.search(searchConfiguration);
 		return report;
 	}

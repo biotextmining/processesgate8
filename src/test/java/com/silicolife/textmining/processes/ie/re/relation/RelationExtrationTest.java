@@ -13,6 +13,7 @@ import java.util.regex.Pattern;
 
 import org.junit.Test;
 
+import com.silicolife.textmining.core.datastructures.exceptions.process.InvalidConfigurationException;
 import com.silicolife.textmining.core.datastructures.init.InitConfiguration;
 import com.silicolife.textmining.core.datastructures.init.exception.InvalidDatabaseAccess;
 import com.silicolife.textmining.core.datastructures.process.ner.ResourcesToNerAnote;
@@ -66,7 +67,7 @@ public class RelationExtrationTest{
 	
 	
 	@Test
-	public void test() throws InvalidDatabaseAccess, ANoteException, InternetConnectionProblemException, IOException, GateException {
+	public void test() throws InvalidDatabaseAccess, ANoteException, InternetConnectionProblemException, IOException, GateException, InvalidConfigurationException {
 		
 		DatabaseConnectionInit.init("localhost","3306","createdatest","root","admin");
 		GateInit.getInstance().init("gate8",null);
