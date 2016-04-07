@@ -1,7 +1,6 @@
 package com.silicolife.textmining.processes.ie.re.relation;
 
 import static org.junit.Assert.assertTrue;
-import gate.util.GateException;
 
 import java.io.File;
 import java.io.IOException;
@@ -16,6 +15,7 @@ import org.junit.Test;
 import com.silicolife.textmining.core.datastructures.exceptions.process.InvalidConfigurationException;
 import com.silicolife.textmining.core.datastructures.init.InitConfiguration;
 import com.silicolife.textmining.core.datastructures.init.exception.InvalidDatabaseAccess;
+import com.silicolife.textmining.core.datastructures.process.ner.NERCaseSensativeEnum;
 import com.silicolife.textmining.core.datastructures.process.ner.ResourcesToNerAnote;
 import com.silicolife.textmining.core.datastructures.resources.dictionary.loaders.DictionaryImpl;
 import com.silicolife.textmining.core.datastructures.resources.dictionary.loaders.configuration.DictionaryLoaderConfigurationImpl;
@@ -62,6 +62,8 @@ import com.silicolife.wrappergate.GateInit;
 import com.silicolife.wrappergate.IGatePosTagger;
 import com.silicolife.wrappergate.tagger.LingPipePosTagger;
 
+import gate.util.GateException;
+
 
 public class RelationExtrationTest{
 	
@@ -97,7 +99,7 @@ public class RelationExtrationTest{
 	public static INERProcessReport executeLinnaeus(ICorpus corpus,IDictionary dictionary) throws ANoteException {
 		boolean useabreviation = true;
 		boolean normalized = true;
-		boolean caseSensitive = true;
+		NERCaseSensativeEnum caseSensitive = NERCaseSensativeEnum.INALLWORDS;
 		ILexicalWords stopwords = null;
 		NERLinnaeusPreProcessingEnum preprocessing = NERLinnaeusPreProcessingEnum.No;
 		Disambiguation disambiguation = Disambiguation.OFF;
