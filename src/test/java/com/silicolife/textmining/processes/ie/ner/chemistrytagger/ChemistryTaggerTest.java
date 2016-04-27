@@ -33,8 +33,8 @@ public class ChemistryTaggerTest{
 		boolean chemistryElements= true;;
 		boolean chemistrylIon= true;;
 		INERChemistryTaggerConfiguration configuration = new NERChemistryTaggerConfiguration(corpus, chemistryElements, chemistryCompound, chemistrylIon);
-		ChemistryTagger chemTagger = new ChemistryTagger(configuration );
-		INERProcessReport report = chemTagger.executeCorpusNER(corpus);
+		ChemistryTagger chemTagger = new ChemistryTagger();
+		INERProcessReport report = chemTagger.executeCorpusNER(configuration);
 		assertTrue(report.isFinishing());
 	}
 

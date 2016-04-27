@@ -46,8 +46,8 @@ public class AbnerTaggerTest {
 //		ABNERTrainingModel model = ABNERTrainingModel.BIOCREATIVE;
 		INERAbnerConfiguration configuration = new NERAbnerConfiguration(corpus, model);
 		System.out.println("Abner Tagger");
-		ABNER abner = new ABNER(configuration );
-		INERProcessReport report = abner.executeCorpusNER(corpus);
+		ABNER abner = new ABNER();
+		INERProcessReport report = abner.executeCorpusNER(configuration );
 		assertTrue(report.isFinishing());
 	}
 	

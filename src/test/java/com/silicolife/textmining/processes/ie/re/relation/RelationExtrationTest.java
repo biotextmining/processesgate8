@@ -1,6 +1,7 @@
 package com.silicolife.textmining.processes.ie.re.relation;
 
 import static org.junit.Assert.assertTrue;
+import gate.util.GateException;
 
 import java.io.File;
 import java.io.IOException;
@@ -29,7 +30,6 @@ import com.silicolife.textmining.core.interfaces.core.document.corpus.ICorpus;
 import com.silicolife.textmining.core.interfaces.core.report.processes.INERProcessReport;
 import com.silicolife.textmining.core.interfaces.core.report.processes.IREProcessReport;
 import com.silicolife.textmining.core.interfaces.process.IE.IIEProcess;
-import com.silicolife.textmining.core.interfaces.process.IE.INERProcess;
 import com.silicolife.textmining.core.interfaces.process.IE.io.export.DefaultDelimiterValue;
 import com.silicolife.textmining.core.interfaces.process.IE.io.export.Delimiter;
 import com.silicolife.textmining.core.interfaces.process.IE.io.export.TextDelimiter;
@@ -62,8 +62,6 @@ import com.silicolife.wrappergate.GateInit;
 import com.silicolife.wrappergate.IGatePosTagger;
 import com.silicolife.wrappergate.tagger.LingPipePosTagger;
 
-import gate.util.GateException;
-
 
 public class RelationExtrationTest{
 	
@@ -75,7 +73,7 @@ public class RelationExtrationTest{
 		GateInit.getInstance().init("gate8",null);
 		ICorpus corpus = AbnerTaggerTest.createCorpus().getCorpus();		
 		IDictionary dictionary = createDictionaryAndUpdateditWithByocycFiles();
-		INERProcess entityProcess = executeLinnaeus(corpus,dictionary).getNERProcess();
+		IIEProcess entityProcess = executeLinnaeus(corpus,dictionary).getNERProcess();
 		System.out.println("Relation Extraction");
 		IIEProcess manualCurationFromOtherProcess = null;
 		ILexicalWords verbClues = new LexicalWordsImpl(getBiomedicalVerbs());
@@ -96,7 +94,7 @@ public class RelationExtrationTest{
 		assertTrue(report.isFinishing());
 	}
 	
-	public static INERProcessReport executeLinnaeus(ICorpus corpus,IDictionary dictionary) throws ANoteException {
+	public static INERProcessReport executeLinnaeus(ICorpus corpus,IDictionary dictionary) throws ANoteException, InvalidConfigurationException {
 		boolean useabreviation = true;
 		boolean normalized = true;
 		NERCaseSensativeEnum caseSensitive = NERCaseSensativeEnum.INALLWORDS;
@@ -109,9 +107,9 @@ public class RelationExtrationTest{
 		int numThreads = 4;
 		boolean usingOtherResourceInfoToImproveRuleAnnotations = false;
 		INERLinnaeusConfiguration configurations = new NERLinnaeusConfiguration(corpus, patterns , resourceToNER, useabreviation , disambiguation , caseSensitive , normalized , numThreads , stopwords , preprocessing , usingOtherResourceInfoToImproveRuleAnnotations );
-		LinnaeusTagger linnaues = new LinnaeusTagger(configurations );
+		LinnaeusTagger linnaues = new LinnaeusTagger( );
 		System.out.println("Execute Linnaeus");
-		INERProcessReport report = linnaues.executeCorpusNER(corpus);
+		INERProcessReport report = linnaues.executeCorpusNER(configurations);
 		return report;
 	}
 	
