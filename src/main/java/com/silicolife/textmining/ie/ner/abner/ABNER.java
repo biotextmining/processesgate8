@@ -23,12 +23,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.silicolife.textmining.core.datastructures.annotation.AnnotationPosition;
 import com.silicolife.textmining.core.datastructures.annotation.AnnotationPositions;
 import com.silicolife.textmining.core.datastructures.annotation.ner.EntityAnnotationImpl;
 import com.silicolife.textmining.core.datastructures.dataaccess.database.schema.TableAnnotation;
 import com.silicolife.textmining.core.datastructures.documents.AnnotatedDocumentImpl;
 import com.silicolife.textmining.core.datastructures.documents.PublicationImpl;
+import com.silicolife.textmining.core.datastructures.exceptions.process.InvalidConfigurationException;
 import com.silicolife.textmining.core.datastructures.general.AnoteClass;
 import com.silicolife.textmining.core.datastructures.init.InitConfiguration;
 import com.silicolife.textmining.core.datastructures.language.LanguageProperties;
@@ -43,52 +45,119 @@ import com.silicolife.textmining.core.datastructures.utils.GenericPairImpl;
 import com.silicolife.textmining.core.datastructures.utils.GenericTriple;
 import com.silicolife.textmining.core.datastructures.utils.Utils;
 import com.silicolife.textmining.core.datastructures.utils.conf.GlobalNames;
+import com.silicolife.textmining.core.datastructures.utils.conf.GlobalOptions;
 import com.silicolife.textmining.core.interfaces.core.annotation.IEntityAnnotation;
 import com.silicolife.textmining.core.interfaces.core.dataaccess.exception.ANoteException;
 import com.silicolife.textmining.core.interfaces.core.document.IAnnotatedDocument;
 import com.silicolife.textmining.core.interfaces.core.document.IDocumentSet;
 import com.silicolife.textmining.core.interfaces.core.document.IPublication;
 import com.silicolife.textmining.core.interfaces.core.document.IPublicationExternalSourceLink;
-import com.silicolife.textmining.core.interfaces.core.document.corpus.ICorpus;
 import com.silicolife.textmining.core.interfaces.core.document.labels.IPublicationLabel;
 import com.silicolife.textmining.core.interfaces.core.document.structure.IPublicationField;
 import com.silicolife.textmining.core.interfaces.core.general.classe.IAnoteClass;
 import com.silicolife.textmining.core.interfaces.core.report.processes.INERProcessReport;
 import com.silicolife.textmining.core.interfaces.process.IProcessOrigin;
+import com.silicolife.textmining.core.interfaces.process.IE.IIEProcess;
 import com.silicolife.textmining.core.interfaces.process.IE.INERProcess;
+import com.silicolife.textmining.core.interfaces.process.IE.ner.INERConfiguration;
 import com.silicolife.textmining.ie.ner.abner.configuration.INERAbnerConfiguration;
 import com.silicolife.wrappergate.GateInit;
 
-public class ABNER extends IEProcessImpl implements INERProcess{
+public class ABNER implements INERProcess{
 
 	public final static String nerAbner = "Abner Tagger";
 
 	public static final IProcessOrigin nerAbnerOrigin= new ProcessOriginImpl(GenerateRandomId.generateID(),nerAbner);
-	static{
-		//		Logger.getLogger(gate.abner.AbnerTagger.class).setLevel(Level.OFF);	
-	}
 
-	private ABNERTrainingModel model;
 	private Document gateDocument;
 	protected static final int characteres = 500000;
 	private File file = new File("fileNERAbner.txt");
 	private boolean stop = false;
 	private AbnerTagger abTagger;
 
-	public ABNER(INERAbnerConfiguration configuration) 
+
+	public ABNER() 
 	{
-		super(configuration.getCorpus(), 
-				nerAbner + " " +Utils.SimpleDataFormat.format(new Date()), 
-				null,
-				ProcessTypeImpl.getNERProcessType(),
-				nerAbnerOrigin,
-				gerateProperties(configuration.getModel()));
-		this.model=configuration.getModel();
+	
+	}
+	
+	public INERProcessReport executeCorpusNER(INERConfiguration configuration) throws ANoteException, InvalidConfigurationException {
+		validateConfiguration(configuration);
+		INERAbnerConfiguration abnerConfiguration = (INERAbnerConfiguration) configuration;
+		IIEProcess runProcess = getIEProcess(configuration, abnerConfiguration);
+		InitConfiguration.getDataAccess().createIEProcess(runProcess);
+		GateInit();
+		INERProcessReport report =  new NERProcessReportImpl(LanguageProperties.getLanguageStream("pt.uminho.anote2.nergate.abner.report.title"),runProcess);
+		int step = 0;
+		IDocumentSet docs = abnerConfiguration.getCorpus().getArticlesCorpus();
+		int size = docs.getAllDocuments().size();
+		int textSize = 0;
+		long startTime = GregorianCalendar.getInstance().getTimeInMillis();
+		StringBuffer stringWhitManyDocuments = new StringBuffer();
+		Map<Long, GenericPairImpl<Integer, Integer>> docLimits = new HashMap<Long, GenericPairImpl<Integer,Integer>>();
+		long actualTime;
+		Iterator<IPublication> itDocs = docs.iterator();
+		while(itDocs.hasNext())
+		{
+			if(stop)
+			{
+				report.setcancel();
+				break;
+			}
+			IPublication pub = itDocs.next();
+			IAnnotatedDocument annotDoc = new AnnotatedDocumentImpl(pub, runProcess, abnerConfiguration.getCorpus());
+			String text = annotDoc.getDocumentAnnotationText();
+			if(text == null || text.length() == 0)
+			{
+//				Logger logger = Logger.getLogger(Workbench.class.getName());
+//				logger.warn("Not available text for publication whit id = "+pub.getId()+" for NER Process");
+			}
+			else
+			{
+				int lenthText = text.length();
+				stringWhitManyDocuments.append(preprocessingtext(text));
+				docLimits.put(pub.getId(), new GenericPairImpl<>(textSize, textSize+lenthText-1));
+				textSize = textSize+lenthText;
+				if(textSize>characteres && !stop)
+				{
+					documetsRelationExtraction(runProcess,abnerConfiguration,docLimits,report,stringWhitManyDocuments);
+					stringWhitManyDocuments = new StringBuffer();
+					textSize=0;
+					docLimits = new HashMap<Long, GenericPairImpl<Integer,Integer>>();
+					memoryAndProgressAndTime(step, size, startTime);
+				}
+				else if(stop)
+				{
+					report.setcancel();
+					break;
+				}
+			}
+			step++;
+			report.incrementDocument();
+		}
+		if(stringWhitManyDocuments.length()>0 && !stop)
+		{
+			documetsRelationExtraction(runProcess,abnerConfiguration,docLimits,report,stringWhitManyDocuments);
+		}
+		actualTime = GregorianCalendar.getInstance().getTimeInMillis();
+		report.setTime(actualTime-startTime);
+		file.delete();
+		cleanAll();
+		return report;
 	}
 
-	private static Properties gerateProperties(ABNERTrainingModel model) {
+	private IIEProcess getIEProcess(INERConfiguration configuration,
+			INERAbnerConfiguration abnerConfiguration) {
+		String description = ABNER.nerAbner  + " " +Utils.SimpleDataFormat.format(new Date());
+		String notes = abnerConfiguration.getNotes();
+		Properties properties = gerateProperties(abnerConfiguration);
+		IIEProcess runProcess = new IEProcessImpl(configuration.getCorpus(), description, notes, ProcessTypeImpl.getNERProcessType(), nerAbnerOrigin, properties);
+		return runProcess;
+	}
+
+	private static Properties gerateProperties(INERAbnerConfiguration abnerConfiguration) {
 		Properties pro = new Properties();
-		pro.put(GlobalNames.nerAbnerModel, model.toValue());
+		pro.put(GlobalNames.nerAbnerModel, abnerConfiguration.getModel().name());
 		return pro;
 	}
 
@@ -104,12 +173,12 @@ public class ABNER extends IEProcessImpl implements INERProcess{
 		}
 	}	
 
-	private void documetsRelationExtraction(Map<Long, GenericPairImpl<Integer, Integer>> docLimits, INERProcessReport report, StringBuffer stringWhitManyDocuments) throws ANoteException {
+	private void documetsRelationExtraction(IIEProcess process,INERAbnerConfiguration configuration,Map<Long, GenericPairImpl<Integer, Integer>> docLimits, INERProcessReport report, StringBuffer stringWhitManyDocuments) throws ANoteException {
 		String fileText = stringWhitManyDocuments.toString();
 		try {
 			FileHandling.writeInformationOnFile(file,fileText);
 
-			performeGateAbner();		
+			performeGateAbner(configuration);		
 			for(long documentID:docLimits.keySet())
 			{
 				Long start = new Long(docLimits.get(documentID).getX());
@@ -126,7 +195,7 @@ public class ABNER extends IEProcessImpl implements INERProcess{
 							new ArrayList<IPublicationExternalSourceLink>(),
 							new ArrayList<IPublicationField>(),
 							new ArrayList<IPublicationLabel>());
-					InitConfiguration.getDataAccess().addProcessDocumentEntitiesAnnotations(this, document, entityAnnotations);
+					InitConfiguration.getDataAccess().addProcessDocumentEntitiesAnnotations(process, document, entityAnnotations);
 					report.incrementEntitiesAnnotated(entityAnnotations.size());
 				}
 				else
@@ -171,7 +240,7 @@ public class ABNER extends IEProcessImpl implements INERProcess{
 		return annotPos;
 	}
 
-	private void performeGateAbner() throws ANoteException {
+	private void performeGateAbner(INERAbnerConfiguration configuration) throws ANoteException {
 		try {
 			if(abTagger==null)
 			{
@@ -184,7 +253,7 @@ public class ABNER extends IEProcessImpl implements INERProcess{
 				params = Factory.newFeatureMap();
 				features = Factory.newFeatureMap();
 				features = Factory.newFeatureMap();
-				params.put("abnerMode", model.toValue());
+				params.put("abnerMode", configuration.getModel().toValue());
 				abTagger = (AbnerTagger) Factory.createResource("gate.abner.AbnerTagger", params, features);
 			}
 			else
@@ -214,68 +283,7 @@ public class ABNER extends IEProcessImpl implements INERProcess{
 		return documentLimits;
 	}
 
-	public INERProcessReport executeCorpusNER(ICorpus corpus) throws ANoteException {
-		InitConfiguration.getDataAccess().createIEProcess(this);
-		GateInit();
-		setCorpus(corpus);
-		INERProcessReport report =  new NERProcessReportImpl(LanguageProperties.getLanguageStream("pt.uminho.anote2.nergate.abner.report.title"),this);
-		int step = 0;
-		IDocumentSet docs = corpus.getArticlesCorpus();
-		int size = docs.getAllDocuments().size();
-		int textSize = 0;
-		long startTime = GregorianCalendar.getInstance().getTimeInMillis();
-		StringBuffer stringWhitManyDocuments = new StringBuffer();
-		Map<Long, GenericPairImpl<Integer, Integer>> docLimits = new HashMap<Long, GenericPairImpl<Integer,Integer>>();
-		long actualTime;
-		Iterator<IPublication> itDocs = docs.iterator();
-		while(itDocs.hasNext())
-		{
-			if(stop)
-			{
-				report.setcancel();
-				break;
-			}
-			IPublication pub = itDocs.next();
-			IAnnotatedDocument annotDoc = new AnnotatedDocumentImpl(pub, this, getCorpus());
-			String text = annotDoc.getDocumentAnnotationText();
-			if(text == null || text.length() == 0)
-			{
-//				Logger logger = Logger.getLogger(Workbench.class.getName());
-//				logger.warn("Not available text for publication whit id = "+pub.getId()+" for NER Process");
-			}
-			else
-			{
-				int lenthText = text.length();
-				stringWhitManyDocuments.append(preprocessingtext(text));
-				docLimits.put(pub.getId(), new GenericPairImpl<>(textSize, textSize+lenthText-1));
-				textSize = textSize+lenthText;
-				if(textSize>characteres && !stop)
-				{
-					documetsRelationExtraction(docLimits,report,stringWhitManyDocuments);
-					stringWhitManyDocuments = new StringBuffer();
-					textSize=0;
-					docLimits = new HashMap<Long, GenericPairImpl<Integer,Integer>>();
-					memoryAndProgressAndTime(step, size, startTime);
-				}
-				else if(stop)
-				{
-					report.setcancel();
-					break;
-				}
-			}
-			step++;
-			report.incrementDocument();
-		}
-		if(stringWhitManyDocuments.length()>0 && !stop)
-		{
-			documetsRelationExtraction(docLimits,report,stringWhitManyDocuments);
-		}
-		actualTime = GregorianCalendar.getInstance().getTimeInMillis();
-		report.setTime(actualTime-startTime);
-		file.delete();
-		cleanAll();
-		return report;
-	}
+	
 
 	private String preprocessingtext(String text) {
 		text=text.replaceAll("'"," ");
@@ -298,5 +306,36 @@ public class ABNER extends IEProcessImpl implements INERProcess{
 	public void stop() {
 		stop = true;	
 	}
+
+
+	@Override
+	public void validateConfiguration(INERConfiguration configuration)throws InvalidConfigurationException {
+		if(configuration instanceof INERAbnerConfiguration)
+		{
+			INERAbnerConfiguration lexicalResurcesConfiguration = (INERAbnerConfiguration) configuration;
+			if(lexicalResurcesConfiguration.getCorpus()==null)
+			{
+				throw new InvalidConfigurationException("Corpus can not be null");
+			}
+		}
+		else
+			throw new InvalidConfigurationException("configuration must be INERAbnerConfiguration isntance");
+		
+	}
+	
+	@JsonIgnore
+	protected void memoryAndProgress(int step, int total) {
+		System.out.println((GlobalOptions.decimalformat.format((double) step / (double) total * 100)) + " %...");
+		System.gc();
+		System.out.println((Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()) / (1024 * 1024) + " MB ");
+	}
+
+	@JsonIgnore
+	protected void memoryAndProgressAndTime(int step, int total, long startTime) {
+		System.out.println((GlobalOptions.decimalformat.format((double) step / (double) total * 100)) + " %...");
+		System.gc();
+		System.out.println((Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()) / (1024 * 1024) + " MB ");
+	}
+
 
 }

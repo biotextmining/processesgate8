@@ -26,12 +26,14 @@ import java.util.Properties;
 
 import mark.chemistry.Tagger;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.silicolife.textmining.core.datastructures.annotation.AnnotationPosition;
 import com.silicolife.textmining.core.datastructures.annotation.AnnotationPositions;
 import com.silicolife.textmining.core.datastructures.annotation.ner.EntityAnnotationImpl;
 import com.silicolife.textmining.core.datastructures.dataaccess.database.schema.TableAnnotation;
 import com.silicolife.textmining.core.datastructures.documents.AnnotatedDocumentImpl;
 import com.silicolife.textmining.core.datastructures.documents.PublicationImpl;
+import com.silicolife.textmining.core.datastructures.exceptions.process.InvalidConfigurationException;
 import com.silicolife.textmining.core.datastructures.general.AnoteClass;
 import com.silicolife.textmining.core.datastructures.init.InitConfiguration;
 import com.silicolife.textmining.core.datastructures.language.LanguageProperties;
@@ -45,61 +47,128 @@ import com.silicolife.textmining.core.datastructures.utils.GenerateRandomId;
 import com.silicolife.textmining.core.datastructures.utils.GenericPairImpl;
 import com.silicolife.textmining.core.datastructures.utils.Utils;
 import com.silicolife.textmining.core.datastructures.utils.conf.GlobalNames;
+import com.silicolife.textmining.core.datastructures.utils.conf.GlobalOptions;
 import com.silicolife.textmining.core.interfaces.core.annotation.IEntityAnnotation;
 import com.silicolife.textmining.core.interfaces.core.dataaccess.exception.ANoteException;
 import com.silicolife.textmining.core.interfaces.core.document.IAnnotatedDocument;
 import com.silicolife.textmining.core.interfaces.core.document.IDocumentSet;
 import com.silicolife.textmining.core.interfaces.core.document.IPublication;
 import com.silicolife.textmining.core.interfaces.core.document.IPublicationExternalSourceLink;
-import com.silicolife.textmining.core.interfaces.core.document.corpus.ICorpus;
 import com.silicolife.textmining.core.interfaces.core.document.labels.IPublicationLabel;
 import com.silicolife.textmining.core.interfaces.core.document.structure.IPublicationField;
 import com.silicolife.textmining.core.interfaces.core.general.classe.IAnoteClass;
 import com.silicolife.textmining.core.interfaces.core.report.processes.INERProcessReport;
 import com.silicolife.textmining.core.interfaces.process.IProcessOrigin;
+import com.silicolife.textmining.core.interfaces.process.IE.IIEProcess;
 import com.silicolife.textmining.core.interfaces.process.IE.INERProcess;
+import com.silicolife.textmining.core.interfaces.process.IE.ner.INERConfiguration;
 import com.silicolife.textmining.ie.ner.chemistrytagger.configuration.INERChemistryTaggerConfiguration;
 import com.silicolife.wrappergate.GateInit;
 
-public class ChemistryTagger  extends IEProcessImpl implements INERProcess{
+public class ChemistryTagger implements INERProcess{
 
 	public final static String nerChemistryTagger = "Chemistry Tagger";
 	public static final IProcessOrigin nerChemistryOrigin= new ProcessOriginImpl(GenerateRandomId.generateID(),nerChemistryTagger);
 
 	private Document gateDocument;
 	private File file = new File("fileNERchemistryTagger.txt");
-	private boolean chemistrylon ;
-	private boolean chemistryElements;
-	private boolean chemistryCompounds;
-	private IAnoteClass klass;
+//	private IAnoteClass klass;
 	private boolean stop = false;
 	protected static final int characteres = 500000;
 	private Tagger tagger;
 	private SimpleTokeniser tokeniser;
 	private RegexSentenceSplitter regExpSentenceSplitter;
+	private static IAnoteClass klass = new AnoteClass("compound");
 
 
 
-	public ChemistryTagger(INERChemistryTaggerConfiguration configuration) {
-		super(configuration.getCorpus(), 
-				nerChemistryTagger + " " +Utils.SimpleDataFormat.format(new Date()), 
-				null,
-				ProcessTypeImpl.getNERProcessType(),
-				nerChemistryOrigin,
-				gerateProperties(configuration.findChemistrylIon(),configuration.findChemistryElements(),configuration.findChemistryCompounds()));
-		this.chemistrylon=configuration.findChemistrylIon();
-		this.chemistryElements=configuration.findChemistryElements();
-		this.chemistryCompounds=configuration.findChemistryCompounds();
+	public ChemistryTagger() {
+
+	}
+	
+	@Override
+	public INERProcessReport executeCorpusNER(INERConfiguration configuration) throws ANoteException,InvalidConfigurationException {
+		try {
+		validateConfiguration(configuration);
+		INERChemistryTaggerConfiguration chimistryTaggerConfiguration = (INERChemistryTaggerConfiguration) configuration;
+		IIEProcess runProcess = getIEProcess(chimistryTaggerConfiguration);
+		InitConfiguration.getDataAccess().createIEProcess(runProcess);
+		GateInit();
+		INERProcessReport report = new NERProcessReportImpl(LanguageProperties.getLanguageStream("pt.uminho.anote2.nergate.chemistry.report.title"),runProcess);
+		int step = 0;
+		IDocumentSet docs = chimistryTaggerConfiguration.getCorpus().getArticlesCorpus();
+		int size = docs.getAllDocuments().size();
+		int textSize = 0;
+		long startTime = GregorianCalendar.getInstance().getTimeInMillis();
+		StringBuffer stringWhitManyDocuments = new StringBuffer();
+		long actualTime;
+		Iterator<IPublication> itDocs = docs.iterator();
+		Map<Long, GenericPairImpl<Integer, Integer>> docLimits = new HashMap<Long, GenericPairImpl<Integer,Integer>>();
+		while(itDocs.hasNext())
+		{
+			if(stop)
+			{
+				report.setcancel();
+				break;
+			}
+			IPublication pub = itDocs.next();
+			IAnnotatedDocument annotDoc = new AnnotatedDocumentImpl(pub, runProcess, chimistryTaggerConfiguration.getCorpus());
+			String text = annotDoc.getDocumentAnnotationText();
+			if(text == null || text.length() == 0)
+			{
+//				Logger logger = Logger.getLogger(Workbench.class.getName());
+//				logger.warn("No available text for publication whit id = "+pub.getId()+" for NER Process");
+			}
+			else
+			{
+				int lenthText = text.length();
+				docLimits.put(pub.getId(), new GenericPairImpl<>(textSize, textSize+lenthText-1));
+				textSize = textSize+lenthText;
+				stringWhitManyDocuments.append(text);		
+				if(stop)
+				{
+					report.setcancel();
+					break;
+				}
+				else if(textSize>characteres && !stop)
+				{
+					documetsRelationExtraction(runProcess,chimistryTaggerConfiguration,docLimits,report,stringWhitManyDocuments);
+					stringWhitManyDocuments = new StringBuffer();
+					docLimits = new HashMap<Long, GenericPairImpl<Integer,Integer>>();
+					textSize=0;
+					memoryAndProgressAndTime(step, size, startTime);
+				}
+			}	
+			step++;
+			report.incrementDocument();
+		}
+		if(stringWhitManyDocuments.length()>0 && !stop)
+		{
+			documetsRelationExtraction(runProcess,chimistryTaggerConfiguration,docLimits,report,stringWhitManyDocuments);
+		}
+		actualTime = GregorianCalendar.getInstance().getTimeInMillis();
+		report.setTime(actualTime - startTime);
+		file.delete();
+		cleanAll();
+		return report;
+		} catch (GateException | IOException e) {
+			throw new ANoteException(e);
+		}
 	}
 
-	private static Properties gerateProperties(boolean chemistrylon, boolean chemistryElements, boolean chemistryCompounds) {
+	private IIEProcess getIEProcess(INERChemistryTaggerConfiguration configuration) {
+		String description = ChemistryTagger.nerChemistryTagger  + " " +Utils.SimpleDataFormat.format(new Date());
+		String notes = configuration.getNotes();
+		Properties properties = gerateProperties(configuration);
+		IIEProcess runProcess = new IEProcessImpl(configuration.getCorpus(), description, notes, ProcessTypeImpl.getNERProcessType(), nerChemistryOrigin, properties);
+		return runProcess;
+	}
+
+	private static Properties gerateProperties(INERChemistryTaggerConfiguration configuration) {
 		Properties pro = new Properties();
-		if(chemistrylon)
-			pro.put(GlobalNames.nerChemistryTaggerChemistrylon, String.valueOf(chemistrylon));
-		if(chemistryCompounds)
-			pro.put(GlobalNames.nerChemistryTaggerChemistryCompounds, String.valueOf(chemistryCompounds));
-		if(chemistryElements)
-			pro.put(GlobalNames.nerChemistryTaggerChemistryElements, String.valueOf(chemistryElements));		
+		pro.put(GlobalNames.nerChemistryTaggerChemistrylon, String.valueOf(configuration.findChemistrylIon()));
+		pro.put(GlobalNames.nerChemistryTaggerChemistryCompounds, String.valueOf(configuration.findChemistryCompounds()));
+		pro.put(GlobalNames.nerChemistryTaggerChemistryElements, String.valueOf(configuration.findChemistryElements()));		
 		return pro;
 	}
 
@@ -142,7 +211,7 @@ public class ChemistryTagger  extends IEProcessImpl implements INERProcess{
 		tagger.execute();
 	}
 
-	private void documetsRelationExtraction(Map<Long, GenericPairImpl<Integer, Integer>> docLimits, INERProcessReport report, StringBuffer stringWhitManyDocuments) throws ANoteException, IOException {
+	private void documetsRelationExtraction(IIEProcess process,INERChemistryTaggerConfiguration configuration,Map<Long, GenericPairImpl<Integer, Integer>> docLimits, INERProcessReport report, StringBuffer stringWhitManyDocuments) throws ANoteException, IOException {
 		String fileText = stringWhitManyDocuments.toString();
 		FileHandling.writeInformationOnFile(file,fileText);
 		try{
@@ -152,11 +221,11 @@ public class ChemistryTagger  extends IEProcessImpl implements INERProcess{
 				Long start = new Long(docLimits.get(docID).getX());
 				Long end = new Long(docLimits.get(docID).getY());
 				AnnotationPositions annotPos = new AnnotationPositions();
-				if(chemistryCompounds & !stop)
+				if(configuration.findChemistryCompounds() & !stop)
 					getAnnotations(annotPos,start,end,GlobalNames.nerChemistryTaggerChemistryCompounds);
-				if(chemistryElements & !stop)
+				if(configuration.findChemistryElements() & !stop)
 					getAnnotations(annotPos,start,end,GlobalNames.nerChemistryTaggerChemistryElements);
-				if(chemistrylon & !stop)	
+				if(configuration.findChemistrylIon() & !stop)	
 					getAnnotations(annotPos,start,end,GlobalNames.nerChemistryTaggerChemistrylon);
 
 				if(!stop)
@@ -169,7 +238,7 @@ public class ChemistryTagger  extends IEProcessImpl implements INERProcess{
 							new ArrayList<IPublicationExternalSourceLink>(),
 							new ArrayList<IPublicationField>(),
 							new ArrayList<IPublicationLabel>());
-					InitConfiguration.getDataAccess().addProcessDocumentEntitiesAnnotations(this, document, entityAnnotations);
+					InitConfiguration.getDataAccess().addProcessDocumentEntitiesAnnotations(process, document, entityAnnotations);
 					report.incrementEntitiesAnnotated(entityAnnotations.size());
 				}
 				else
@@ -197,81 +266,14 @@ public class ChemistryTagger  extends IEProcessImpl implements INERProcess{
 			if(end-start<TableAnnotation.maxAnnotaionElementSize && start>=startDoc && end <= endDoc)
 			{
 				String value= gateDocument.getContent().getContent(start, end).toString();
-				IEntityAnnotation entity = new EntityAnnotationImpl(start-startDoc, end-startDoc, klass ,null, value, NormalizationForm.getNormalizationForm(value), null);
+				IEntityAnnotation entity = new EntityAnnotationImpl(start-startDoc, end-startDoc, klass  ,null, value, NormalizationForm.getNormalizationForm(value), null);
 				AnnotationPosition position = new AnnotationPosition(Integer.parseInt(String.valueOf(start-startDoc)), Integer.parseInt(String.valueOf(end-startDoc)));
 				annotPos.addAnnotationWhitConflicts(position, entity);
 			}
 		}
 	}
 
-	@Override
-	public INERProcessReport executeCorpusNER(ICorpus corpus) throws ANoteException {
-		try {
-		InitConfiguration.getDataAccess().createIEProcess(this);
-		GateInit();
-		setCorpus(corpus);
-		klass = new AnoteClass("compound");
-		INERProcessReport report = new NERProcessReportImpl(LanguageProperties.getLanguageStream("pt.uminho.anote2.nergate.chemistry.report.title"),this);
-		int step = 0;
-		IDocumentSet docs = corpus.getArticlesCorpus();
-		int size = docs.getAllDocuments().size();
-		int textSize = 0;
-		long startTime = GregorianCalendar.getInstance().getTimeInMillis();
-		StringBuffer stringWhitManyDocuments = new StringBuffer();
-		long actualTime;
-		Iterator<IPublication> itDocs = docs.iterator();
-		Map<Long, GenericPairImpl<Integer, Integer>> docLimits = new HashMap<Long, GenericPairImpl<Integer,Integer>>();
-		while(itDocs.hasNext())
-		{
-			if(stop)
-			{
-				report.setcancel();
-				break;
-			}
-			IPublication pub = itDocs.next();
-			IAnnotatedDocument annotDoc = new AnnotatedDocumentImpl(pub, this, getCorpus());
-			String text = annotDoc.getDocumentAnnotationText();
-			if(text == null || text.length() == 0)
-			{
-//				Logger logger = Logger.getLogger(Workbench.class.getName());
-//				logger.warn("No available text for publication whit id = "+pub.getId()+" for NER Process");
-			}
-			else
-			{
-				int lenthText = text.length();
-				docLimits.put(pub.getId(), new GenericPairImpl<>(textSize, textSize+lenthText-1));
-				textSize = textSize+lenthText;
-				stringWhitManyDocuments.append(text);		
-				if(stop)
-				{
-					report.setcancel();
-					break;
-				}
-				else if(textSize>characteres && !stop)
-				{
-					documetsRelationExtraction(docLimits,report,stringWhitManyDocuments);
-					stringWhitManyDocuments = new StringBuffer();
-					docLimits = new HashMap<Long, GenericPairImpl<Integer,Integer>>();
-					textSize=0;
-					memoryAndProgressAndTime(step, size, startTime);
-				}
-			}	
-			step++;
-			report.incrementDocument();
-		}
-		if(stringWhitManyDocuments.length()>0 && !stop)
-		{
-			documetsRelationExtraction(docLimits,report,stringWhitManyDocuments);
-		}
-		actualTime = GregorianCalendar.getInstance().getTimeInMillis();
-		report.setTime(actualTime - startTime);
-		file.delete();
-		cleanAll();
-		return report;
-		} catch (GateException | IOException e) {
-			throw new ANoteException(e);
-		}
-	}
+	
 
 	private void cleanAll() {
 		if(tokeniser!=null)
@@ -296,5 +298,35 @@ public class ChemistryTagger  extends IEProcessImpl implements INERProcess{
 		this.stop = true;
 
 	}
+
+	@Override
+	public void validateConfiguration(INERConfiguration configuration)throws InvalidConfigurationException {
+		if(configuration instanceof INERChemistryTaggerConfiguration)
+		{
+			INERChemistryTaggerConfiguration lexicalResurcesConfiguration = (INERChemistryTaggerConfiguration) configuration;
+			if(lexicalResurcesConfiguration.getCorpus()==null)
+			{
+				throw new InvalidConfigurationException("Corpus can not be null");
+			}
+		}
+		else
+			throw new InvalidConfigurationException("configuration must be INERChemistryTaggerConfiguration isntance");		
+	}
+	
+	
+	@JsonIgnore
+	protected void memoryAndProgress(int step, int total) {
+		System.out.println((GlobalOptions.decimalformat.format((double) step / (double) total * 100)) + " %...");
+		System.gc();
+		System.out.println((Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()) / (1024 * 1024) + " MB ");
+	}
+
+	@JsonIgnore
+	protected void memoryAndProgressAndTime(int step, int total, long startTime) {
+		System.out.println((GlobalOptions.decimalformat.format((double) step / (double) total * 100)) + " %...");
+		System.gc();
+		System.out.println((Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()) / (1024 * 1024) + " MB ");
+	}
+
 
 }
