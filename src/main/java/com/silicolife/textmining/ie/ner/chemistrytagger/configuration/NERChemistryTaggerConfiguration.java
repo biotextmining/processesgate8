@@ -8,6 +8,8 @@ import com.silicolife.textmining.ie.ner.chemistrytagger.ChemistryTagger;
 
 public class NERChemistryTaggerConfiguration extends NERConfigurationImpl implements INERChemistryTaggerConfiguration{
 
+	public static String nerChemistryTaggerUID = "ner.chemistrytagger";
+
 	private boolean chemistryElements;
 	private boolean chemistryCompounds;
 	private boolean chemistrylIon;
@@ -43,6 +45,17 @@ public class NERChemistryTaggerConfiguration extends NERConfigurationImpl implem
 	@Override
 	public void setConfiguration(Object obj) {
 		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public String getConfigurationUID() {
+		return NERChemistryTaggerConfiguration.nerChemistryTaggerUID;
+	}
+
+	@Override
+	public void setConfigurationUID(String uid) {
+		NERChemistryTaggerConfiguration.nerChemistryTaggerUID=uid;
 		
 	}
 

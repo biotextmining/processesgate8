@@ -9,6 +9,9 @@ import com.silicolife.textmining.ie.ner.abner.ABNERTrainingModel;
 
 public class NERAbnerConfiguration extends NERConfigurationImpl implements INERAbnerConfiguration{
 
+	public static String nerAbnerUID = "ner.abner";
+
+	
 	private ABNERTrainingModel model;
 	
 	public NERAbnerConfiguration(ICorpus corpus, ABNERTrainingModel model) {
@@ -34,6 +37,17 @@ public class NERAbnerConfiguration extends NERConfigurationImpl implements INERA
 	@Override
 	public void setConfiguration(Object obj) {
 		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public String getConfigurationUID() {
+		return NERAbnerConfiguration.nerAbnerUID;
+	}
+
+	@Override
+	public void setConfigurationUID(String uid) {
+		NERAbnerConfiguration.nerAbnerUID = uid;
 		
 	}
 

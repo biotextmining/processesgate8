@@ -14,6 +14,9 @@ import com.silicolife.textmining.ie.re.relation.RelationsExtraction;
 import com.silicolife.wrappergate.IGatePosTagger;
 
 public class RERelationConfiguration extends REConfigurationImpl implements IRERelationConfiguration{
+	
+	public static String reRelationUID = "re.relation";
+
 
 	private IGatePosTagger posTagger;
 	private IRelationModel relationModel;
@@ -124,6 +127,17 @@ public class RERelationConfiguration extends REConfigurationImpl implements IRER
 	@Override
 	public ILexicalWords getVerbsClues() {
 		return verbclues;
+	}
+
+	@Override
+	public String getConfigurationUID() {
+		return RERelationConfiguration.reRelationUID;
+	}
+
+	@Override
+	public void setConfigurationUID(String uid) {
+		RERelationConfiguration.reRelationUID=uid;
+		
 	}
 
 }
