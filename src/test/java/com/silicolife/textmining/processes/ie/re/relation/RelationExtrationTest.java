@@ -54,7 +54,7 @@ import com.silicolife.textmining.processes.ie.ner.abner.AbnerTaggerTest;
 import com.silicolife.textmining.processes.ie.ner.linnaeus.LinnaeusTagger;
 import com.silicolife.textmining.processes.ie.ner.linnaeus.adapt.uk.ac.man.entitytagger.matching.Matcher.Disambiguation;
 import com.silicolife.textmining.processes.ie.ner.linnaeus.configuration.INERLinnaeusConfiguration;
-import com.silicolife.textmining.processes.ie.ner.linnaeus.configuration.NERLinnaeusConfiguration;
+import com.silicolife.textmining.processes.ie.ner.linnaeus.configuration.NERLinnaeusConfigurationImpl;
 import com.silicolife.textmining.processes.ie.ner.linnaeus.configuration.NERLinnaeusPreProcessingEnum;
 import com.silicolife.textmining.processes.resources.dictionary.loaders.byocyc.BioMetaEcoCycFlatFileLoader;
 import com.silicolife.textmining.processes.resources.lexicalwords.csvlader.LexicalWordsCSVLoader;
@@ -106,7 +106,7 @@ public class RelationExtrationTest{
 		Map<String, Pattern> patterns = new HashMap<String, Pattern>();
 		int numThreads = 4;
 		boolean usingOtherResourceInfoToImproveRuleAnnotations = false;
-		INERLinnaeusConfiguration configurations = new NERLinnaeusConfiguration(corpus, patterns , resourceToNER, useabreviation , disambiguation , caseSensitive , normalized , numThreads , stopwords , preprocessing , usingOtherResourceInfoToImproveRuleAnnotations );
+		INERLinnaeusConfiguration configurations = new NERLinnaeusConfigurationImpl(corpus, patterns , resourceToNER, useabreviation , disambiguation , caseSensitive , normalized , numThreads , stopwords , preprocessing , usingOtherResourceInfoToImproveRuleAnnotations );
 		LinnaeusTagger linnaues = new LinnaeusTagger( );
 		System.out.println("Execute Linnaeus");
 		INERProcessReport report = linnaues.executeCorpusNER(configurations);

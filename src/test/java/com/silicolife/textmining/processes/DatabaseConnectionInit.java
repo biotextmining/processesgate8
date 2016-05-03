@@ -22,8 +22,8 @@ public class DatabaseConnectionInit {
 	{
 		IDatabase dabaseAcess = factoryDatabase(host,port,schema,username,password);
 		Properties properties = new Properties();
-		properties.put("Using-Title-In-Abstract", true);
-		properties.put("Free-Full-Text-Only", true);
+		properties.put("Using-Title-In-Abstract", "true");
+		properties.put("Free-Full-Text-Only", "true");
 		Proxy proxy = null;
 		String hibernateFilePath = "src/test/resources/hibernate.cfg.xml";
 		IDataAccess dataAccess = new DatabaseAccess(dabaseAcess,hibernateFilePath);

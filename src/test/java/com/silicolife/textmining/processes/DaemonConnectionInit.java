@@ -19,8 +19,8 @@ public class DaemonConnectionInit{
 	{
 		IDaemon daemonConfigurations = checkDeamonConnection(protocol, port,url,rootPath);
 		Properties properties = new Properties();
-		properties.put("Using-Title-In-Abstract", true);
-		properties.put("Free-Full-Text-Only", true);
+		properties.put("Using-Title-In-Abstract", "true");
+		properties.put("Free-Full-Text-Only", "true");
 		Proxy proxy = null;
 		DaemonAccess dataAccess = new DaemonAccess(daemonConfigurations);
 		InitConfiguration.init(dataAccess,proxy,properties);
