@@ -158,7 +158,7 @@ public class ChemistryTagger implements INERProcess{
 
 	private IIEProcess getIEProcess(INERChemistryTaggerConfiguration configuration) {
 		String description = ChemistryTagger.nerChemistryTagger  + " " +Utils.SimpleDataFormat.format(new Date());
-		String notes = configuration.getNotes();
+		String notes = configuration.getProcessNotes();
 		Properties properties = gerateProperties(configuration);
 		IIEProcess runProcess = new IEProcessImpl(configuration.getCorpus(), description, notes, ProcessTypeImpl.getNERProcessType(), nerChemistryOrigin, properties);
 		return runProcess;

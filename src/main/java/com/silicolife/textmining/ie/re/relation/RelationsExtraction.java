@@ -76,7 +76,7 @@ public class RelationsExtraction extends IEProcessImpl implements IREProcess{
 	{
 		super(configuration.getCorpus(),
 				relationName+" "+Utils.SimpleDataFormat.format(new Date()),
-				configuration.getNotes(),
+				configuration.getProcessNotes(),
 				ProcessTypeImpl.getREProcessType(),
 				relationProcessType,
 				gerateProperties(configuration));

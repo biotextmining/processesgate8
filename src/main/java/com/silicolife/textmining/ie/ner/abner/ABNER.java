@@ -149,7 +149,7 @@ public class ABNER implements INERProcess{
 	private IIEProcess getIEProcess(INERConfiguration configuration,
 			INERAbnerConfiguration abnerConfiguration) {
 		String description = ABNER.nerAbner  + " " +Utils.SimpleDataFormat.format(new Date());
-		String notes = abnerConfiguration.getNotes();
+		String notes = abnerConfiguration.getProcessNotes();
 		Properties properties = gerateProperties(abnerConfiguration);
 		IIEProcess runProcess = new IEProcessImpl(configuration.getCorpus(), description, notes, ProcessTypeImpl.getNERProcessType(), nerAbnerOrigin, properties);
 		return runProcess;
