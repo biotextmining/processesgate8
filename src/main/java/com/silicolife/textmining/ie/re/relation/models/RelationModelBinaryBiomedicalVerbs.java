@@ -21,11 +21,10 @@ import com.silicolife.textmining.core.interfaces.core.document.structure.ISenten
 import com.silicolife.textmining.core.interfaces.core.document.structure.ISentenceSintaxRepresentation;
 import com.silicolife.textmining.core.interfaces.process.IE.re.clue.IVerbInfo;
 import com.silicolife.textmining.core.interfaces.resource.lexicalwords.ILexicalWords;
-import com.silicolife.textmining.ie.re.relation.configuration.IRERelationAdvancedConfiguration;
+import com.silicolife.textmining.ie.re.relation.configuration.IRERelationConfiguration;
 import com.silicolife.textmining.ie.re.relation.models.deepannalysis.BinaryBiomedicalVerbModelDeepAnnalysis;
 import com.silicolife.textmining.ie.re.relation.models.specialproperties.VerbClassificationInSentenceEnum;
 import com.silicolife.textmining.processes.nlptools.structure.SimpliedSentenceSyntaxTree;
-import com.silicolife.wrappergate.IGatePosTagger;
 
 public class RelationModelBinaryBiomedicalVerbs extends RelationModelBinaryVerbLimitation {
 
@@ -33,9 +32,9 @@ public class RelationModelBinaryBiomedicalVerbs extends RelationModelBinaryVerbL
 	private Set<String> rejectedVerbs;
 	private Set<String> aceptedVerbs;
 	
-	public RelationModelBinaryBiomedicalVerbs(IGatePosTagger postagger,ILexicalWords biomedicalVerbs,IRERelationAdvancedConfiguration advancedConfiguration) {
-		super(postagger,advancedConfiguration);
-		this.biomedicalVerbs = biomedicalVerbs;
+	public RelationModelBinaryBiomedicalVerbs(IRERelationConfiguration configuration) {
+		super(configuration);
+		this.biomedicalVerbs = configuration.getVerbsClues();
 		this.rejectedVerbs = new HashSet<String>();
 		this.aceptedVerbs = new HashSet<String>();
 	}

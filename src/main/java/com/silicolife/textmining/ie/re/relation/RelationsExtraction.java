@@ -17,12 +17,14 @@ import java.util.SortedSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.silicolife.textmining.core.datastructures.annotation.AnnotationPosition;
 import com.silicolife.textmining.core.datastructures.annotation.AnnotationPositions;
 import com.silicolife.textmining.core.datastructures.annotation.AnnotationType;
 import com.silicolife.textmining.core.datastructures.annotation.re.EventAnnotationImpl;
 import com.silicolife.textmining.core.datastructures.dataaccess.database.dataaccess.CorpusProcessAnnotationLogs;
 import com.silicolife.textmining.core.datastructures.documents.AnnotatedDocumentImpl;
+import com.silicolife.textmining.core.datastructures.exceptions.process.InvalidConfigurationException;
 import com.silicolife.textmining.core.datastructures.general.ClassPropertiesManagement;
 import com.silicolife.textmining.core.datastructures.init.InitConfiguration;
 import com.silicolife.textmining.core.datastructures.process.IEProcessImpl;
@@ -34,6 +36,7 @@ import com.silicolife.textmining.core.datastructures.utils.GenerateRandomId;
 import com.silicolife.textmining.core.datastructures.utils.GenericPairImpl;
 import com.silicolife.textmining.core.datastructures.utils.Utils;
 import com.silicolife.textmining.core.datastructures.utils.conf.GlobalNames;
+import com.silicolife.textmining.core.datastructures.utils.conf.GlobalOptions;
 import com.silicolife.textmining.core.interfaces.core.annotation.AnnotationLogTypeEnum;
 import com.silicolife.textmining.core.interfaces.core.annotation.IAnnotationLog;
 import com.silicolife.textmining.core.interfaces.core.annotation.IEntityAnnotation;
@@ -48,6 +51,7 @@ import com.silicolife.textmining.core.interfaces.core.report.processes.IREProces
 import com.silicolife.textmining.core.interfaces.process.IProcessOrigin;
 import com.silicolife.textmining.core.interfaces.process.IE.IIEProcess;
 import com.silicolife.textmining.core.interfaces.process.IE.IREProcess;
+import com.silicolife.textmining.core.interfaces.process.IE.re.IREConfiguration;
 import com.silicolife.textmining.core.interfaces.process.IE.re.IRelationModel;
 import com.silicolife.textmining.ie.re.relation.configuration.IRERelationAdvancedConfiguration;
 import com.silicolife.textmining.ie.re.relation.configuration.IRERelationConfiguration;
@@ -56,7 +60,7 @@ import com.silicolife.textmining.ie.re.relation.datastructures.POSTaggerHelp;
 import com.silicolife.wrappergate.IGatePosTagger;
 
 
-public class RelationsExtraction extends IEProcessImpl implements IREProcess{
+public class RelationsExtraction implements IREProcess{
 	
 	private Pattern findOffset = Pattern.compile("(\\d+)-(\\d+)");
 
@@ -64,37 +68,23 @@ public class RelationsExtraction extends IEProcessImpl implements IREProcess{
 	public final static IProcessOrigin relationProcessType = new ProcessOriginImpl(GenerateRandomId.generateID(),relationName);
 	
 	protected static final int characteres = 500000;
-	private IRelationModel relationModel;
-	private IGatePosTagger posTagger;
-	private IIEProcess ieProcess;
 	private boolean stop=false;
+
+	private IGatePosTagger posTagger;
 	private static final String tempfilename = "refileTmp.txt";
-	private IIEProcess processToRetriveMC;
 	
 	
-	public RelationsExtraction(IRERelationConfiguration configuration)
+	public RelationsExtraction()
 	{
-		super(configuration.getCorpus(),
-				relationName+" "+Utils.SimpleDataFormat.format(new Date()),
-				configuration.getProcessNotes(),
-				ProcessTypeImpl.getREProcessType(),
-				relationProcessType,
-				gerateProperties(configuration));
-		this.ieProcess=configuration.getIEProcess();
-		this.posTagger=configuration.getPOSTagger();
-		this.relationModel=configuration.getRelationModel();
-		if(configuration.useManualCurationFromOtherProcess())
-		{
-			processToRetriveMC = configuration.getManualCurationFromOtherProcess();
-		}
+
 	}
 
 	private static Properties gerateProperties(IRERelationConfiguration configuration) {
 		Properties prop = new Properties();
-		prop.putAll(configuration.getRelationModel().getProperties());
+		prop.putAll(configuration.getRelationModelEnum().getRelationModel(configuration).getProperties());
 		prop.put(GlobalNames.taggerName,String.valueOf(configuration.getPOSTagger().toString()));
 		prop.put(GlobalNames.entityBasedProcess,String.valueOf(configuration.getIEProcess().getID()));
-		prop.put(GlobalNames.relationModel,configuration.getRelationModel().toString());
+		prop.put(GlobalNames.relationModel,configuration.getRelationModelEnum().toString());
 		prop.putAll(configuration.getPOSTagger().getProperties());
 		if(configuration.getIEProcess().getProperties().containsKey(GlobalNames.normalization))
 		{
@@ -103,7 +93,7 @@ public class RelationsExtraction extends IEProcessImpl implements IREProcess{
 				prop.put(GlobalNames.normalization, configuration.getIEProcess().getProperties().getProperty(GlobalNames.normalization));
 			}
 		}
-		if(configuration.getRelationModel().getDescription().equals("Binary Selected Verbs Only"))
+		if(configuration.getRelationModelEnum().getRelationModel(configuration).getDescription().equals("Binary Selected Verbs Only"))
 		{
 			
 			prop.put(GlobalNames.verbAdditionOnly,String.valueOf(configuration.getVerbsClues().getId()));
@@ -141,12 +131,19 @@ public class RelationsExtraction extends IEProcessImpl implements IREProcess{
 	}
 	
 
-	public IREProcessReport executeRE() throws  ANoteException {
-		InitConfiguration.getDataAccess().createIEProcess(this);
-		IREProcessReport report = new REProcessReportImpl(relationName, ieProcess,this,processToRetriveMC != null);
+	public IREProcessReport executeRE(IREConfiguration configuration) throws  ANoteException, InvalidConfigurationException {
+		validateConfiguration(configuration);
+		IRERelationConfiguration reConfiguration = (IRERelationConfiguration) configuration;
+		IIEProcess reProcess = new IEProcessImpl(reConfiguration.getCorpus(), relationName+" "+Utils.SimpleDataFormat.format(new Date()),
+				reConfiguration.getProcessNotes(), ProcessTypeImpl.getREProcessType(), relationProcessType, gerateProperties(reConfiguration));
+		InitConfiguration.getDataAccess().createIEProcess(reProcess);	
+		IRelationModel relationModel = reConfiguration.getRelationModelEnum().getRelationModel(reConfiguration);
+		posTagger = reConfiguration.getPOSTagger();
+		IIEProcess processToRetriveMC = reConfiguration.getManualCurationFromOtherProcess();
+		IREProcessReport report = new REProcessReportImpl(relationName, reProcess,reProcess,processToRetriveMC != null);
 		long startTime = GregorianCalendar.getInstance().getTimeInMillis();
 		try {
-			relationProcessing(report);
+			relationProcessing(relationModel,reProcess,reConfiguration,report);
 		} catch (IOException | GateException e) {
 			throw new ANoteException(e);
 		}
@@ -155,8 +152,8 @@ public class RelationsExtraction extends IEProcessImpl implements IREProcess{
 		return report;
 	}
 
-	protected void relationProcessing(IREProcessReport report) throws IOException, GateException, ANoteException {
-		IDocumentSet docs = getCorpus().getArticlesCorpus();
+	protected void relationProcessing(IRelationModel relationModel,IIEProcess reProcess,IRERelationConfiguration configuration,IREProcessReport report) throws IOException, GateException, ANoteException {
+		IDocumentSet docs = configuration.getCorpus().getArticlesCorpus();
 		Iterator<IPublication> itDocs =docs.iterator();
 		int max = docs.size();
 		StringBuffer stringWhitManyDocuments = new StringBuffer();
@@ -174,7 +171,7 @@ public class RelationsExtraction extends IEProcessImpl implements IREProcess{
 			}
 			docInDocumentGate++;
 			IPublication doc = itDocs.next();
-			IAnnotatedDocument annotDoc = new AnnotatedDocumentImpl(doc,this, getCorpus());
+			IAnnotatedDocument annotDoc = new AnnotatedDocumentImpl(doc,reProcess, configuration.getCorpus());
 			String text = annotDoc.getDocumentAnnotationText();
 			docLimits.put(doc.getId(), new GenericPairImpl<>(size, size+text.length()-1));
 			size = size+text.length();
@@ -193,7 +190,7 @@ public class RelationsExtraction extends IEProcessImpl implements IREProcess{
 				}
 				else if(size>characteres && !stop)
 				{
-					documetsRelationExtraction(docLimits,report,stringWhitManyDocuments);
+					documetsRelationExtraction(relationModel,reProcess,configuration,docLimits,report,stringWhitManyDocuments);
 					stringWhitManyDocuments = new StringBuffer();
 					size=0;
 					position = position + docInDocumentGate;
@@ -207,7 +204,7 @@ public class RelationsExtraction extends IEProcessImpl implements IREProcess{
 		}
 		if(stringWhitManyDocuments.length()>0 && !stop)
 		{
-			documetsRelationExtraction(docLimits,report,stringWhitManyDocuments);
+			documetsRelationExtraction(relationModel,reProcess,configuration,docLimits,report,stringWhitManyDocuments);
 		}
 		cleanDocument();
 	}
@@ -216,7 +213,7 @@ public class RelationsExtraction extends IEProcessImpl implements IREProcess{
 		posTagger.cleanALL();
 	}
 
-	protected void documetsRelationExtraction(Map<Long, GenericPairImpl<Integer, Integer>> docLimits, IREProcessReport report, StringBuffer stringWhitManyDocuments) throws GateException, ANoteException, IOException {
+	protected void documetsRelationExtraction(IRelationModel relationModel,IIEProcess process,IRERelationConfiguration configuration,Map<Long, GenericPairImpl<Integer, Integer>> docLimits, IREProcessReport report, StringBuffer stringWhitManyDocuments) throws GateException, ANoteException, IOException {
 		Set<String> termionations = relationModel.getRelationTerminations();
 		if(!stop)
 		{
@@ -225,8 +222,8 @@ public class RelationsExtraction extends IEProcessImpl implements IREProcess{
 			FileHandling.writeInformationOnFile(fileTmp,fileText);
 			posTagger.completePLSteps(fileTmp);
 			CorpusProcessAnnotationLogs annotationLogs = null;
-			if(this.processToRetriveMC!=null)
-				annotationLogs = new CorpusProcessAnnotationLogs(processToRetriveMC,true);
+			if(configuration.getManualCurationFromOtherProcess()!=null)
+				annotationLogs = new CorpusProcessAnnotationLogs(configuration.getManualCurationFromOtherProcess(),true);
 			for(long documentID:docLimits.keySet())
 			{
 				if(stop)
@@ -236,9 +233,9 @@ public class RelationsExtraction extends IEProcessImpl implements IREProcess{
 				}
 				long documentStartOffset = new Long(docLimits.get(documentID).getX());
 				long documentEndOffset = new Long(docLimits.get(documentID).getY());
-				IPublication doc = getCorpus().getArticlesCorpus().getDocument(documentID);
-				IAnnotatedDocument annotDoc = new AnnotatedDocumentImpl(doc,this, getCorpus());
-				IAnnotatedDocument annotDocSourceNER = new AnnotatedDocumentImpl(doc,ieProcess, getCorpus());
+				IPublication doc = configuration.getCorpus().getArticlesCorpus().getDocument(documentID);
+				IAnnotatedDocument annotDoc = new AnnotatedDocumentImpl(doc,process, configuration.getCorpus());
+				IAnnotatedDocument annotDocSourceNER = new AnnotatedDocumentImpl(doc,configuration.getIEProcess(), configuration.getCorpus());
 				List<GenericPairImpl<Long, Long>> sentencesLimits = POSTaggerHelp.getGateDocumentSentencelimits(posTagger.getGateDoc(),documentStartOffset,documentEndOffset);	
 				List<IEntityAnnotation> allDoucmentSemanticLayer = annotDocSourceNER.getEntitiesAnnotations();
 				// NER Manual Curation
@@ -260,7 +257,7 @@ public class RelationsExtraction extends IEProcessImpl implements IREProcess{
 				if(annotationLogs!=null)
 					relations = applyMCToRE(documentID,annotationLogs,report,relations,allDoucmentSemanticLayer);
 				// Insert Entities and Relations in Database
-				insertAnnotationsInDatabse(report,annotDoc,allDoucmentSemanticLayer,relations);
+				insertAnnotationsInDatabse(process,report,annotDoc,allDoucmentSemanticLayer,relations);
 			}
 			fileTmp.delete();
 		}
@@ -268,15 +265,15 @@ public class RelationsExtraction extends IEProcessImpl implements IREProcess{
 	
 	
 
-	private void insertAnnotationsInDatabse(IREProcessReport report,IAnnotatedDocument annotDoc,List<IEntityAnnotation> entitiesList,List<IEventAnnotation> relationsList) throws ANoteException {
+	private void insertAnnotationsInDatabse(IIEProcess process,IREProcessReport report,IAnnotatedDocument annotDoc,List<IEntityAnnotation> entitiesList,List<IEventAnnotation> relationsList) throws ANoteException {
 		// Generate new Ids for Entities
 		for(IEntityAnnotation entity:entitiesList)
 		{
 			entity.generateNewId();
 		}
-		InitConfiguration.getDataAccess().addProcessDocumentEntitiesAnnotations(this, annotDoc, entitiesList);
+		InitConfiguration.getDataAccess().addProcessDocumentEntitiesAnnotations(process, annotDoc, entitiesList);
 		report.incrementEntitiesAnnotated(entitiesList.size());
-		InitConfiguration.getDataAccess().addProcessDocumentEventAnnoations(this, annotDoc,relationsList);
+		InitConfiguration.getDataAccess().addProcessDocumentEventAnnoations(process, annotDoc,relationsList);
 		report.increaseRelations(relationsList.size());
 	}
 
@@ -746,20 +743,37 @@ public class RelationsExtraction extends IEProcessImpl implements IREProcess{
 		return sentenceAnnotation;
 	}
 
-	public IRelationModel getRelationModel() {
-		return relationModel;
-	}
-
-	public IGatePosTagger getPosTagger() {
-		return posTagger;
-	}
-
-	public IIEProcess getNerProcess() {
-		return ieProcess;
-	}
-
 	public void stop() {
 		this.stop = true;
 		
 	}		
+	
+	@Override
+	public void validateConfiguration(IREConfiguration configuration)throws InvalidConfigurationException {
+		if(configuration instanceof IRERelationConfiguration)
+		{
+			IRERelationConfiguration lexicalResurcesConfiguration = (IRERelationConfiguration) configuration;
+			if(lexicalResurcesConfiguration.getCorpus()==null)
+			{
+				throw new InvalidConfigurationException("Corpus can not be null");
+			}
+		}
+		else
+			throw new InvalidConfigurationException("configuration must be IRERelationConfiguration isntance");		
+	}
+	
+	@JsonIgnore
+	protected void memoryAndProgress(int step, int total) {
+		System.out.println((GlobalOptions.decimalformat.format((double) step / (double) total * 100)) + " %...");
+		System.gc();
+		System.out.println((Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()) / (1024 * 1024) + " MB ");
+	}
+
+	@JsonIgnore
+	protected void memoryAndProgressAndTime(int step, int total, long startTime) {
+		System.out.println((GlobalOptions.decimalformat.format((double) step / (double) total * 100)) + " %...");
+		System.gc();
+		System.out.println((Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()) / (1024 * 1024) + " MB ");
+	}
+
 }

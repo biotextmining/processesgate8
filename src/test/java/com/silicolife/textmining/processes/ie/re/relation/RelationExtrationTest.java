@@ -33,7 +33,6 @@ import com.silicolife.textmining.core.interfaces.process.IE.IIEProcess;
 import com.silicolife.textmining.core.interfaces.process.IE.io.export.DefaultDelimiterValue;
 import com.silicolife.textmining.core.interfaces.process.IE.io.export.Delimiter;
 import com.silicolife.textmining.core.interfaces.process.IE.io.export.TextDelimiter;
-import com.silicolife.textmining.core.interfaces.process.IE.re.IRelationModel;
 import com.silicolife.textmining.core.interfaces.process.IE.re.IRelationsType;
 import com.silicolife.textmining.core.interfaces.process.IR.exception.InternetConnectionProblemException;
 import com.silicolife.textmining.core.interfaces.resource.IResource;
@@ -48,7 +47,7 @@ import com.silicolife.textmining.ie.re.relation.configuration.RERelationAdvanced
 import com.silicolife.textmining.ie.re.relation.configuration.RERelationConfiguration;
 import com.silicolife.textmining.ie.re.relation.datastructures.Directionality;
 import com.silicolife.textmining.ie.re.relation.datastructures.Polarity;
-import com.silicolife.textmining.ie.re.relation.models.RelationModelBinaryBiomedicalVerbs;
+import com.silicolife.textmining.ie.re.relation.models.RelationsModelEnem;
 import com.silicolife.textmining.processes.DatabaseConnectionInit;
 import com.silicolife.textmining.processes.ie.ner.abner.AbnerTaggerTest;
 import com.silicolife.textmining.processes.ie.ner.linnaeus.LinnaeusTagger;
@@ -78,19 +77,23 @@ public class RelationExtrationTest{
 		IIEProcess manualCurationFromOtherProcess = null;
 		ILexicalWords verbClues = new LexicalWordsImpl(getBiomedicalVerbs());
 		ILexicalWords verbFilter = null;
+		ILexicalWords verbAdition = null;
 		boolean useManualCurationFromOtherProcess = false;
 		boolean usingOnlyVerbNearestEntities = false;
 		boolean usingOnlyEntitiesNearestVerb = false;
 		int verbEntitieMaxDistance = 10;
 		SortedSet<IRelationsType> relationsType = null;
 		boolean groupingSynonyms = true;
-		IRERelationAdvancedConfiguration advancedConfiguration = new RERelationAdvancedConfiguration(usingOnlyVerbNearestEntities, usingOnlyEntitiesNearestVerb, verbEntitieMaxDistance, groupingSynonyms , relationsType, useManualCurationFromOtherProcess, manualCurationFromOtherProcess);
-		ILexicalWords verbAdittion = null;
-		IGatePosTagger posTagger = new LingPipePosTagger(new Directionality(),new Polarity(),null,null);
-		IRelationModel relationModel = new RelationModelBinaryBiomedicalVerbs(posTagger, verbClues, advancedConfiguration);
-		IRERelationConfiguration configuration = new RERelationConfiguration(corpus, entityProcess, useManualCurationFromOtherProcess, manualCurationFromOtherProcess, posTagger, relationModel, verbFilter, verbAdittion, verbClues, advancedConfiguration);
-		RelationsExtraction relation = new RelationsExtraction(configuration );
-		IREProcessReport report = relation.executeRE();
+		IRERelationAdvancedConfiguration advancedConfiguration = new RERelationAdvancedConfiguration(usingOnlyVerbNearestEntities, usingOnlyEntitiesNearestVerb, verbEntitieMaxDistance, groupingSynonyms , relationsType,verbClues , useManualCurationFromOtherProcess, manualCurationFromOtherProcess);
+		IGatePosTagger posTagger = new LingPipePosTagger(new Directionality(),new Polarity(),verbFilter,verbAdition);
+		ILexicalWords verbCluesAdittion = null;
+		RelationsModelEnem relationModel = RelationsModelEnem.Binary_Biomedical_Verbs;
+		IRERelationConfiguration configuration = new RERelationConfiguration(corpus, entityProcess, useManualCurationFromOtherProcess, manualCurationFromOtherProcess, posTagger, relationModel , verbFilter, verbCluesAdittion, verbClues, advancedConfiguration);
+		RelationsExtraction relation = new RelationsExtraction();
+		IREProcessReport report = relation.executeRE(configuration);
+		System.out.println(report.getNumberOFEntities());
+		System.out.println(report.getNumberOfRelations());
+
 		assertTrue(report.isFinishing());
 	}
 	

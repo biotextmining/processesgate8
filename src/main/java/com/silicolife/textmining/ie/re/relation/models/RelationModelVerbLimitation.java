@@ -23,9 +23,9 @@ import com.silicolife.textmining.core.interfaces.core.document.structure.ISenten
 import com.silicolife.textmining.core.interfaces.process.IE.re.IRelationModel;
 import com.silicolife.textmining.core.interfaces.process.IE.re.clue.IVerbInfo;
 import com.silicolife.textmining.ie.re.relation.configuration.IRERelationAdvancedConfiguration;
+import com.silicolife.textmining.ie.re.relation.configuration.IRERelationConfiguration;
 import com.silicolife.textmining.ie.re.relation.configuration.RERelationNames;
 import com.silicolife.textmining.ie.re.relation.models.specialproperties.VerbClassificationInSentenceEnum;
-import com.silicolife.wrappergate.IGatePosTagger;
 /**
  * @author Hugo Costa
  * 
@@ -35,9 +35,9 @@ public class RelationModelVerbLimitation extends RelationModelSimple implements 
 
 	private IRERelationAdvancedConfiguration advancedConfiguration;
 
-	public RelationModelVerbLimitation(IGatePosTagger postagger,IRERelationAdvancedConfiguration advancedConfiguration) {
-		super(postagger);
-		this.advancedConfiguration = advancedConfiguration;
+	public RelationModelVerbLimitation(IRERelationConfiguration configuration) {
+		super(configuration);
+		this.advancedConfiguration = configuration.getAdvancedConfiguration();
 	}
 	
 	public Set<String> getRelationTerminations() 

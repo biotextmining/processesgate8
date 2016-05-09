@@ -6,6 +6,7 @@ import java.util.SortedSet;
 
 import com.silicolife.textmining.core.interfaces.process.IE.IIEProcess;
 import com.silicolife.textmining.core.interfaces.process.IE.re.IRelationsType;
+import com.silicolife.textmining.core.interfaces.resource.lexicalwords.ILexicalWords;
 
 public class RERelationAdvancedConfiguration implements IRERelationAdvancedConfiguration{
 
@@ -40,7 +41,7 @@ public class RERelationAdvancedConfiguration implements IRERelationAdvancedConfi
 
 	
 	public RERelationAdvancedConfiguration(boolean usingOnlyVerbNearestEntities,boolean usingOnlyEntitiesNearestVerb,int verbEntitieMaxDistance,boolean groupingSynonyms,
-			SortedSet<IRelationsType> relationsType,boolean useManualCurationFromOtherProcess,IIEProcess manualCurationFromOtherProcess)
+			SortedSet<IRelationsType> relationsType,ILexicalWords biomedicalVerbsFilter,boolean useManualCurationFromOtherProcess,IIEProcess manualCurationFromOtherProcess)
 	{
 		this.usingVerbEntitiesDistance = false;
 		this.usingOnlyVerbNearestEntities = usingOnlyVerbNearestEntities;
@@ -200,6 +201,19 @@ public class RERelationAdvancedConfiguration implements IRERelationAdvancedConfi
 	public IIEProcess getManualCurationFromOtherProcess() {
 		return manualCurationFromOtherProcess;
 	}
+
+
+//	@Override
+//	public ILexicalWords getBiomedicalVerb() {
+//		return biomedicalVerbs;
+//	}
+//
+//
+//	@Override
+//	public void setBiomedicalVerb(ILexicalWords verbs) {
+//		biomedicalVerbs=verbs;
+//		
+//	}
 
 
 

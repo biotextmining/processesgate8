@@ -19,15 +19,14 @@ import com.silicolife.textmining.core.interfaces.core.dataaccess.exception.ANote
 import com.silicolife.textmining.core.interfaces.core.document.IAnnotatedDocument;
 import com.silicolife.textmining.core.interfaces.process.IE.re.IRelationsType;
 import com.silicolife.textmining.core.interfaces.process.IE.re.clue.IVerbInfo;
-import com.silicolife.textmining.ie.re.relation.configuration.IRERelationAdvancedConfiguration;
+import com.silicolife.textmining.ie.re.relation.configuration.IRERelationConfiguration;
 import com.silicolife.textmining.ie.re.relation.models.specialproperties.VerbClassificationInSentenceEnum;
-import com.silicolife.wrappergate.IGatePosTagger;
 
 public class RelationModelBinaryVerbLimitation extends RelationModelVerbLimitation {
 
 
-	public RelationModelBinaryVerbLimitation(IGatePosTagger postagger,IRERelationAdvancedConfiguration advanceConfiguration) {
-		super(postagger,advanceConfiguration);
+	public RelationModelBinaryVerbLimitation(IRERelationConfiguration configuration) {
+		super(configuration);
 	}
 	
 	protected List<IEventAnnotation> extractRelation(IAnnotatedDocument document,IVerbInfo verb,IVerbInfo previous,IVerbInfo further,List<IEntityAnnotation> potencialEntitiesAtLeft,

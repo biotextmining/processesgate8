@@ -35,5 +35,4 @@ public interface IRERelationAdvancedConfiguration {
 	public Set<String> getINRemoveListAfter();
 	public Set<String> getRemoveListAfter();
 
-
 }

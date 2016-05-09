@@ -1,18 +1,12 @@
-package com.silicolife.textmining.ie.re.relation.datastructures;
+package com.silicolife.textmining.ie.re.relation.models;
 
 import com.silicolife.textmining.core.interfaces.process.IE.re.IRelationModel;
-import com.silicolife.textmining.core.interfaces.resource.lexicalwords.ILexicalWords;
-import com.silicolife.textmining.ie.re.relation.configuration.IRERelationAdvancedConfiguration;
-import com.silicolife.textmining.ie.re.relation.models.RelationModelBinaryBiomedicalVerbs;
-import com.silicolife.textmining.ie.re.relation.models.RelationModelBinaryVerbLimitation;
-import com.silicolife.textmining.ie.re.relation.models.RelationModelSimple;
-import com.silicolife.textmining.ie.re.relation.models.RelationModelVerbLimitation;
-import com.silicolife.wrappergate.IGatePosTagger;
+import com.silicolife.textmining.ie.re.relation.configuration.IRERelationConfiguration;
 
 public enum RelationsModelEnem {
 	Binary_Biomedical_Verbs{
-		public IRelationModel getRelationModel(IGatePosTagger postagger,ILexicalWords biomedicalverbs,IRERelationAdvancedConfiguration advancedConfiguration) {
-			return 	new RelationModelBinaryBiomedicalVerbs(postagger,biomedicalverbs,advancedConfiguration);
+		public IRelationModel getRelationModel(IRERelationConfiguration configuration) {
+			return 	new RelationModelBinaryBiomedicalVerbs(configuration);
 		}
 
 		public String getDescription(){
@@ -29,8 +23,8 @@ public enum RelationsModelEnem {
 	}
 	,
 	Binary_Verb_limitation{
-		public IRelationModel getRelationModel(IGatePosTagger postagger,ILexicalWords biomedicalverbs,IRERelationAdvancedConfiguration advancedConfiguration) {
-			return 	new RelationModelBinaryVerbLimitation(postagger,advancedConfiguration);
+		public IRelationModel getRelationModel(IRERelationConfiguration configuration) {
+			return 	new RelationModelBinaryVerbLimitation(configuration);
 		}
 
 		public String getDescription(){
@@ -47,8 +41,8 @@ public enum RelationsModelEnem {
 	}
 	,
 	Verb_Limitation{
-		public IRelationModel getRelationModel(IGatePosTagger postagger,ILexicalWords biomedicalverbs,IRERelationAdvancedConfiguration advancedConfiguration) {
-			return 	new RelationModelVerbLimitation(postagger,advancedConfiguration);
+		public IRelationModel getRelationModel(IRERelationConfiguration configuration) {
+			return 	new RelationModelVerbLimitation(configuration);
 		}
 
 		public String getDescription(){
@@ -65,8 +59,8 @@ public enum RelationsModelEnem {
 	},
 	
 	Simple_Model{
-		public IRelationModel getRelationModel(IGatePosTagger postagger,ILexicalWords biomedicalverbs,IRERelationAdvancedConfiguration advancedConfiguration) {
-			return new RelationModelSimple(postagger);
+		public IRelationModel getRelationModel(IRERelationConfiguration configuration) {
+			return new RelationModelSimple(configuration);
 		}
 
 		public String getDescription() {
@@ -84,8 +78,8 @@ public enum RelationsModelEnem {
 
 
 
-	public IRelationModel getRelationModel(IGatePosTagger postagger,ILexicalWords biomedicalverbs,IRERelationAdvancedConfiguration advancedConfiguration){
-		return this.getRelationModel(postagger,biomedicalverbs,advancedConfiguration);
+	public IRelationModel getRelationModel(IRERelationConfiguration configuration){
+		return this.getRelationModel(configuration);
 	}
 	
 	public String getDescription() {

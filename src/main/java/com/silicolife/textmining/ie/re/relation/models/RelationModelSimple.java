@@ -21,6 +21,7 @@ import com.silicolife.textmining.core.interfaces.core.document.IAnnotatedDocumen
 import com.silicolife.textmining.core.interfaces.core.document.structure.ISentenceSintaxRepresentation;
 import com.silicolife.textmining.core.interfaces.process.IE.re.IRelationModel;
 import com.silicolife.textmining.core.interfaces.process.IE.re.clue.IVerbInfo;
+import com.silicolife.textmining.ie.re.relation.configuration.IRERelationConfiguration;
 import com.silicolife.wrappergate.IGatePosTagger;
 
 /**
@@ -33,8 +34,8 @@ public class RelationModelSimple implements IRelationModel{
 
 	private IGatePosTagger postagger;
 
-	public RelationModelSimple(IGatePosTagger postagger) {
-		this.postagger = postagger;
+	public RelationModelSimple(IRERelationConfiguration configuration) {
+		this.postagger = configuration.getPOSTagger();
 	}
 
 	public Set<String> getRelationTerminations() 

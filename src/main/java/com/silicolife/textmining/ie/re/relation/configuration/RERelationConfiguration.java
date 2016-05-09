@@ -7,10 +7,10 @@ import java.util.SortedSet;
 import com.silicolife.textmining.core.datastructures.process.re.REConfigurationImpl;
 import com.silicolife.textmining.core.interfaces.core.document.corpus.ICorpus;
 import com.silicolife.textmining.core.interfaces.process.IE.IIEProcess;
-import com.silicolife.textmining.core.interfaces.process.IE.re.IRelationModel;
 import com.silicolife.textmining.core.interfaces.process.IE.re.IRelationsType;
 import com.silicolife.textmining.core.interfaces.resource.lexicalwords.ILexicalWords;
 import com.silicolife.textmining.ie.re.relation.RelationsExtraction;
+import com.silicolife.textmining.ie.re.relation.models.RelationsModelEnem;
 import com.silicolife.wrappergate.IGatePosTagger;
 
 public class RERelationConfiguration extends REConfigurationImpl implements IRERelationConfiguration{
@@ -19,14 +19,14 @@ public class RERelationConfiguration extends REConfigurationImpl implements IRER
 
 
 	private IGatePosTagger posTagger;
-	private IRelationModel relationModel;
+	private RelationsModelEnem relationModel;
 	private ILexicalWords verbFilter;
 	private ILexicalWords verbAdittion;
 	private ILexicalWords verbclues;
 	private IRERelationAdvancedConfiguration advancedConfiguration;
 	
 	public RERelationConfiguration(ICorpus corpus, IIEProcess entityProcess,boolean useManualCurationFromOtherProcess,IIEProcess manualCurationFromOtherProcess,
-			IGatePosTagger posTagger,IRelationModel relationModel,
+			IGatePosTagger posTagger,RelationsModelEnem relationModel,
 			ILexicalWords verbFilter,ILexicalWords verbAdittion,ILexicalWords verbClues,IRERelationAdvancedConfiguration advancedConfiguration) {
 		super(RelationsExtraction.relationName,corpus, entityProcess,useManualCurationFromOtherProcess,manualCurationFromOtherProcess);
 		this.posTagger = posTagger;
@@ -43,7 +43,7 @@ public class RERelationConfiguration extends REConfigurationImpl implements IRER
 	}
 
 	@Override
-	public IRelationModel getRelationModel() {
+	public RelationsModelEnem getRelationModelEnum() {
 		return relationModel;
 	}
 
@@ -66,7 +66,7 @@ public class RERelationConfiguration extends REConfigurationImpl implements IRER
 	public Map<String, String> getREProperties() {
 		Map<String, String> properties = new HashMap<String, String>();
 		properties.put(RERelationDefaultSettings.POSTAGGER, posTagger.getUID());
-		properties.put(RERelationDefaultSettings.MODEL, relationModel.getUID());
+		properties.put(RERelationDefaultSettings.MODEL, relationModel.getRelationModel(this).getUID());
 		long verbfilterID = 0;
 		if(verbFilter!=null)
 		{
