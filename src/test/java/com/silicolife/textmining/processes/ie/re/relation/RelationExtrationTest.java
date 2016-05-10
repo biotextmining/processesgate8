@@ -45,8 +45,7 @@ import com.silicolife.textmining.ie.re.relation.configuration.IRERelationAdvance
 import com.silicolife.textmining.ie.re.relation.configuration.IRERelationConfiguration;
 import com.silicolife.textmining.ie.re.relation.configuration.RERelationAdvancedConfiguration;
 import com.silicolife.textmining.ie.re.relation.configuration.RERelationConfiguration;
-import com.silicolife.textmining.ie.re.relation.datastructures.Directionality;
-import com.silicolife.textmining.ie.re.relation.datastructures.Polarity;
+import com.silicolife.textmining.ie.re.relation.datastructures.GatePOSTaggerEnum;
 import com.silicolife.textmining.ie.re.relation.models.RelationsModelEnem;
 import com.silicolife.textmining.processes.DatabaseConnectionInit;
 import com.silicolife.textmining.processes.ie.ner.abner.AbnerTaggerTest;
@@ -58,8 +57,6 @@ import com.silicolife.textmining.processes.ie.ner.linnaeus.configuration.NERLinn
 import com.silicolife.textmining.processes.resources.dictionary.loaders.byocyc.BioMetaEcoCycFlatFileLoader;
 import com.silicolife.textmining.processes.resources.lexicalwords.csvlader.LexicalWordsCSVLoader;
 import com.silicolife.wrappergate.GateInit;
-import com.silicolife.wrappergate.IGatePosTagger;
-import com.silicolife.wrappergate.tagger.LingPipePosTagger;
 
 
 public class RelationExtrationTest{
@@ -77,7 +74,6 @@ public class RelationExtrationTest{
 		IIEProcess manualCurationFromOtherProcess = null;
 		ILexicalWords verbClues = new LexicalWordsImpl(getBiomedicalVerbs());
 		ILexicalWords verbFilter = null;
-		ILexicalWords verbAdition = null;
 		boolean useManualCurationFromOtherProcess = false;
 		boolean usingOnlyVerbNearestEntities = false;
 		boolean usingOnlyEntitiesNearestVerb = false;
@@ -85,7 +81,7 @@ public class RelationExtrationTest{
 		SortedSet<IRelationsType> relationsType = null;
 		boolean groupingSynonyms = true;
 		IRERelationAdvancedConfiguration advancedConfiguration = new RERelationAdvancedConfiguration(usingOnlyVerbNearestEntities, usingOnlyEntitiesNearestVerb, verbEntitieMaxDistance, groupingSynonyms , relationsType,verbClues , useManualCurationFromOtherProcess, manualCurationFromOtherProcess);
-		IGatePosTagger posTagger = new LingPipePosTagger(new Directionality(),new Polarity(),verbFilter,verbAdition);
+		GatePOSTaggerEnum posTagger = GatePOSTaggerEnum.LingPipe_POS;
 		ILexicalWords verbCluesAdittion = null;
 		RelationsModelEnem relationModel = RelationsModelEnem.Binary_Biomedical_Verbs;
 		IRERelationConfiguration configuration = new RERelationConfiguration(corpus, entityProcess, useManualCurationFromOtherProcess, manualCurationFromOtherProcess, posTagger, relationModel , verbFilter, verbCluesAdittion, verbClues, advancedConfiguration);
@@ -122,7 +118,7 @@ public class RelationExtrationTest{
 		IResource<IResourceElement> resource = createDictionary("Biocyc");
 		IDictionary dictionary = new DictionaryImpl(resource);
 		BioMetaEcoCycFlatFileLoader loader = new BioMetaEcoCycFlatFileLoader();
-		String byocycFolder = "src/test/resources/BioCyc/data";
+		String byocycFolder = "src/test/resources/BioCyc/small";
 		File file = new File(byocycFolder);
 		if(loader.checkFile(file))
 		{

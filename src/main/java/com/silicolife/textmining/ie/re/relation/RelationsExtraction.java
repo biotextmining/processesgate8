@@ -82,10 +82,10 @@ public class RelationsExtraction implements IREProcess{
 	private static Properties gerateProperties(IRERelationConfiguration configuration) {
 		Properties prop = new Properties();
 		prop.putAll(configuration.getRelationModelEnum().getRelationModel(configuration).getProperties());
-		prop.put(GlobalNames.taggerName,String.valueOf(configuration.getPOSTagger().toString()));
+		prop.put(GlobalNames.taggerName,String.valueOf(configuration.getPOSTaggerEnum().toString()));
 		prop.put(GlobalNames.entityBasedProcess,String.valueOf(configuration.getIEProcess().getID()));
 		prop.put(GlobalNames.relationModel,configuration.getRelationModelEnum().toString());
-		prop.putAll(configuration.getPOSTagger().getProperties());
+		prop.putAll(configuration.getPOSTaggerEnum().getPOSTagger(configuration.getVerbsFilter(), configuration.getVerbsAddition()).getProperties());
 		if(configuration.getIEProcess().getProperties().containsKey(GlobalNames.normalization))
 		{
 			if(Boolean.valueOf(configuration.getIEProcess().getProperties().getProperty(GlobalNames.normalization)))
@@ -138,7 +138,7 @@ public class RelationsExtraction implements IREProcess{
 				reConfiguration.getProcessNotes(), ProcessTypeImpl.getREProcessType(), relationProcessType, gerateProperties(reConfiguration));
 		InitConfiguration.getDataAccess().createIEProcess(reProcess);	
 		IRelationModel relationModel = reConfiguration.getRelationModelEnum().getRelationModel(reConfiguration);
-		posTagger = reConfiguration.getPOSTagger();
+		posTagger = reConfiguration.getPOSTaggerEnum().getPOSTagger(reConfiguration.getVerbsFilter(),reConfiguration.getVerbsAddition());
 		IIEProcess processToRetriveMC = reConfiguration.getManualCurationFromOtherProcess();
 		IREProcessReport report = new REProcessReportImpl(relationName, reProcess,reProcess,processToRetriveMC != null);
 		long startTime = GregorianCalendar.getInstance().getTimeInMillis();

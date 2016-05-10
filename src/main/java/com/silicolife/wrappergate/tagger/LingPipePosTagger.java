@@ -25,7 +25,7 @@ public class LingPipePosTagger extends Gate7PosTagger{
 		super();
 	}
 	
-	public LingPipePosTagger(IDirectionality rulesDir,IPolarity rulesPol,ILexicalWords verbFilter,ILexicalWords verbAddition) throws GateException, MalformedURLException 
+	public LingPipePosTagger(IDirectionality rulesDir,IPolarity rulesPol,ILexicalWords verbFilter,ILexicalWords verbAddition)
 	{
 		super(rulesDir,rulesPol,verbFilter,verbAddition);
 	}

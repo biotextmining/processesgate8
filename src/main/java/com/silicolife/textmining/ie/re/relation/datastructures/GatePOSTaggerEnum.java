@@ -1,21 +1,15 @@
 package com.silicolife.textmining.ie.re.relation.datastructures;
 
-import gate.util.GateException;
-
-import java.net.MalformedURLException;
-
 import com.silicolife.textmining.core.datastructures.language.LanguageProperties;
-import com.silicolife.textmining.core.interfaces.core.annotation.re.IDirectionality;
-import com.silicolife.textmining.core.interfaces.core.annotation.re.IPolarity;
 import com.silicolife.textmining.core.interfaces.resource.lexicalwords.ILexicalWords;
 import com.silicolife.wrappergate.IGatePosTagger;
 import com.silicolife.wrappergate.tagger.Gate7PosTagger;
 import com.silicolife.wrappergate.tagger.LingPipePosTagger;
 
-public enum PosTaggerEnem {
+public enum GatePOSTaggerEnum {
 	Gate_POS
 	{
-		public IGatePosTagger getPostagger(IDirectionality dir,IPolarity pol, ILexicalWords verbFilter,ILexicalWords verbAddition){
+		public IGatePosTagger getPOSTagger(ILexicalWords verbFilter,ILexicalWords verbAddition){
 			return new Gate7PosTagger(new Directionality(),new Polarity(),verbFilter,verbAddition);
 		}
 		
@@ -35,17 +29,9 @@ public enum PosTaggerEnem {
 	},
 	LingPipe_POS
 	{
-		public IGatePosTagger getPostagger(IDirectionality dir,IPolarity pol, ILexicalWords verbFilter,ILexicalWords verbAddition){
-			try {
-				return new LingPipePosTagger(new Directionality(),new Polarity(),verbFilter,verbAddition);
-			} catch (MalformedURLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (GateException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			return null;
+		public IGatePosTagger getPOSTagger(ILexicalWords verbFilter,ILexicalWords verbAddition){
+			return new LingPipePosTagger(new Directionality(),new Polarity(),verbFilter,verbAddition);
+
 		}
 		
 		public String toString(){
@@ -63,8 +49,8 @@ public enum PosTaggerEnem {
 		}
 	};
 	
-	public IGatePosTagger getPostagger(IDirectionality dir,IPolarity pol, ILexicalWords verbFilter,ILexicalWords verbAddition) {
-		return this.getPostagger(dir,pol,verbFilter,verbAddition);
+	public IGatePosTagger getPOSTagger(ILexicalWords verbFilter,ILexicalWords verbAddition) {
+		return this.getPOSTagger(verbFilter,verbAddition);
 	}
 	
 	public String getDescrition()
@@ -77,15 +63,15 @@ public enum PosTaggerEnem {
 		return this.getImagePath();
 	}
 	
-	public static PosTaggerEnem convertStringInPosTaggerEnem(String str)
+	public static GatePOSTaggerEnum convertStringInPosTaggerEnem(String str)
 	{
 		if(str.equals("Gate POS Tagging"))
 		{
-			return PosTaggerEnem.Gate_POS;
+			return GatePOSTaggerEnum.Gate_POS;
 		}
 		else if(str.equals("Ling Pipe POS-Tagger"))
 		{
-			return PosTaggerEnem.LingPipe_POS;
+			return GatePOSTaggerEnum.LingPipe_POS;
 		}
 		return null;
 	}

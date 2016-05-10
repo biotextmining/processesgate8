@@ -10,15 +10,15 @@ import com.silicolife.textmining.core.interfaces.process.IE.IIEProcess;
 import com.silicolife.textmining.core.interfaces.process.IE.re.IRelationsType;
 import com.silicolife.textmining.core.interfaces.resource.lexicalwords.ILexicalWords;
 import com.silicolife.textmining.ie.re.relation.RelationsExtraction;
+import com.silicolife.textmining.ie.re.relation.datastructures.GatePOSTaggerEnum;
 import com.silicolife.textmining.ie.re.relation.models.RelationsModelEnem;
-import com.silicolife.wrappergate.IGatePosTagger;
 
 public class RERelationConfiguration extends REConfigurationImpl implements IRERelationConfiguration{
 	
 	public static String reRelationUID = "re.relation";
 
 
-	private IGatePosTagger posTagger;
+	private GatePOSTaggerEnum posTagger;
 	private RelationsModelEnem relationModel;
 	private ILexicalWords verbFilter;
 	private ILexicalWords verbAdittion;
@@ -26,7 +26,7 @@ public class RERelationConfiguration extends REConfigurationImpl implements IRER
 	private IRERelationAdvancedConfiguration advancedConfiguration;
 	
 	public RERelationConfiguration(ICorpus corpus, IIEProcess entityProcess,boolean useManualCurationFromOtherProcess,IIEProcess manualCurationFromOtherProcess,
-			IGatePosTagger posTagger,RelationsModelEnem relationModel,
+			GatePOSTaggerEnum posTagger,RelationsModelEnem relationModel,
 			ILexicalWords verbFilter,ILexicalWords verbAdittion,ILexicalWords verbClues,IRERelationAdvancedConfiguration advancedConfiguration) {
 		super(RelationsExtraction.relationName,corpus, entityProcess,useManualCurationFromOtherProcess,manualCurationFromOtherProcess);
 		this.posTagger = posTagger;
@@ -38,7 +38,7 @@ public class RERelationConfiguration extends REConfigurationImpl implements IRER
 	}
 
 	@Override
-	public IGatePosTagger getPOSTagger() {
+	public GatePOSTaggerEnum getPOSTaggerEnum() {
 		return posTagger;
 	}
 
@@ -65,7 +65,7 @@ public class RERelationConfiguration extends REConfigurationImpl implements IRER
 	@Override
 	public Map<String, String> getREProperties() {
 		Map<String, String> properties = new HashMap<String, String>();
-		properties.put(RERelationDefaultSettings.POSTAGGER, posTagger.getUID());
+		properties.put(RERelationDefaultSettings.POSTAGGER, posTagger.getPOSTagger(verbFilter,verbAdittion).getUID());
 		properties.put(RERelationDefaultSettings.MODEL, relationModel.getRelationModel(this).getUID());
 		long verbfilterID = 0;
 		if(verbFilter!=null)
