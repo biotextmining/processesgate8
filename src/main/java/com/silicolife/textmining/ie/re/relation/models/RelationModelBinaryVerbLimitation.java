@@ -42,15 +42,15 @@ public class RelationModelBinaryVerbLimitation extends RelationModelVerbLimitati
 		eventProperties.setDirectionally(dir);
 		eventProperties.setLemma(lemma);
 		eventProperties.setPolarity(polarity);			
-		if(getAdvancedConfiguration()!=null && getAdvancedConfiguration().usingOnlyVerbNearestEntities())
+		if(getAdvancedConfiguration()!=null && getAdvancedConfiguration().isUsingOnlyVerbNearestEntities())
 		{
 			processindOnlyNearestEntities(verb,leftentities, rightentities,potencialEntitiesAtLeft, potencialEntitiesAtRight);
 		}
-		else if(getAdvancedConfiguration()!=null && getAdvancedConfiguration().usingOnlyEntitiesNearestVerb())
+		else if(getAdvancedConfiguration()!=null && getAdvancedConfiguration().isUsingOnlyEntitiesNearestVerb())
 		{
 			processingEntitiesNearestToVerb(verb,previous,further, leftentities, rightentities,potencialEntitiesAtLeft, potencialEntitiesAtRight,verbClassidfication);
 		}
-		else if(getAdvancedConfiguration()!=null && getAdvancedConfiguration().usingVerbEntitiesDistance() && getAdvancedConfiguration().getVerbEntitieMaxDistance() > 0)
+		else if(getAdvancedConfiguration()!=null && getAdvancedConfiguration().isUsingVerbEntitiesDistance() && getAdvancedConfiguration().getVerbEntitieMaxDistance() > 0)
 		{
 			processindEntitiesWithMaxVerbDistance(document,verb,potencialEntitiesAtLeft,potencialEntitiesAtRight, leftentities, rightentities,getAdvancedConfiguration().getVerbEntitieMaxDistance());
 		}
@@ -59,7 +59,7 @@ public class RelationModelBinaryVerbLimitation extends RelationModelVerbLimitati
 			leftentities = potencialEntitiesAtLeft;
 			rightentities = potencialEntitiesAtRight;
 		}
-		if(getAdvancedConfiguration().groupingSynonyms())
+		if(getAdvancedConfiguration().isGroupingSynonyms())
 		{
 			SortedSet<IEntityAnnotation> setEntitiesAtLeft = new TreeSet<IEntityAnnotation>();	
 			SortedSet<IEntityAnnotation> setEntitiesAtRight = new TreeSet<IEntityAnnotation>();			

@@ -145,11 +145,11 @@ public class RelationModelVerbLimitationOld extends RelationModelSimpleOld imple
 		PolarityEnum polarity = verb.getPolarity();
 		SortedSet<IEntityAnnotation> setOfEntitiesAnnotations = new TreeSet<IEntityAnnotation>();
 		SortedSet<IEntityAnnotation> setOfRightAnnotations = new TreeSet<IEntityAnnotation>();
-		if(getAdvancedConfiguration()!=null && getAdvancedConfiguration().usingOnlyEntitiesNearestVerb())
+		if(getAdvancedConfiguration()!=null && getAdvancedConfiguration().isUsingOnlyEntitiesNearestVerb())
 		{
 			processingEntitiesNearestToVerb(verb, startPosition, endPosition, keySetEnt,treeEntitiesPositions, leftentities, rightentities,setOfEntitiesAnnotations, setOfRightAnnotations,verbClassidfication);
 		}
-		else if(getAdvancedConfiguration()!=null && getAdvancedConfiguration().usingVerbEntitiesDistance() && getAdvancedConfiguration().getVerbEntitieMaxDistance() > 0)
+		else if(getAdvancedConfiguration()!=null && getAdvancedConfiguration().isUsingVerbEntitiesDistance() && getAdvancedConfiguration().getVerbEntitieMaxDistance() > 0)
 		{
 			processindEntitiesWithMaxVerbDistance(document,verb, startPosition, endPosition, keySetEnt,treeEntitiesPositions, leftentities, rightentities,setOfEntitiesAnnotations, setOfRightAnnotations,getAdvancedConfiguration().getVerbEntitieMaxDistance());
 		}
@@ -364,15 +364,15 @@ public class RelationModelVerbLimitationOld extends RelationModelSimpleOld imple
 		Properties prop = super.getProperties();
 		if(getAdvancedConfiguration()!=null)
 		{
-			if(getAdvancedConfiguration().usingOnlyVerbNearestEntities())
+			if(getAdvancedConfiguration().isUsingOnlyVerbNearestEntities())
 			{
 				prop.put(RERelationNames.usingOnlyVerbNearestEntities,"true");
 			}
-			else if(getAdvancedConfiguration().usingOnlyEntitiesNearestVerb())
+			else if(getAdvancedConfiguration().isUsingOnlyEntitiesNearestVerb())
 			{
 				prop.put(RERelationNames.usingOnlyEntitiesNearestVerb,"true");
 			}
-			else if(getAdvancedConfiguration().usingVerbEntitiesDistance())
+			else if(getAdvancedConfiguration().isUsingVerbEntitiesDistance())
 			{
 				if(getAdvancedConfiguration().getVerbEntitieMaxDistance()>0)
 				{

@@ -7,7 +7,7 @@ import com.silicolife.textmining.ie.re.relation.models.RelationsModelEnem;
 
 public interface IRERelationConfiguration extends IREConfiguration{
 	
-	public GatePOSTaggerEnum getPOSTaggerEnum();
+	public GatePOSTaggerEnum getPosTaggerEnum();
 	public RelationsModelEnem getRelationModelEnum();
 	public ILexicalWords getVerbsFilter();
 	public ILexicalWords getVerbsAddition();

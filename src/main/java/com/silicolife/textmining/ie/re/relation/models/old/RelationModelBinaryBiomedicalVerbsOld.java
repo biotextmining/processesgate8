@@ -39,7 +39,7 @@ public class RelationModelBinaryBiomedicalVerbsOld extends RelationModelBinaryVe
 		Map<Long, IEntityAnnotation> treeEntitiesPositions = RelationModelutils.getEntitiesPosition(semanticLayer); // offset->entityID
 		List<IVerbInfo> verbsSubSetInfo = filterVerbs(sentenceSintax.getListVerbs());
 		// Remove all verbs that are inside of Parenthesis
-		if(!getAdvancedConfiguration().allowverbswithinParenthesis())
+		if(!getAdvancedConfiguration().isAllowverbswithinParenthesis())
 		{
 			verbsSubSetInfo = removeVerbswithinParenthesis(verbsSubSetInfo,document,sentenceSintax);
 		}

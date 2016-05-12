@@ -36,26 +36,26 @@ public class BinaryBiomedicalVerbModelDeepAnnalysis {
 		this.potencialEntitiesAtLeft = potencialEntitiesAtLeft;
 		this.potencialEntitiesAtRight = potencialEntitiesAtRight; 
 		// Using deepParsing to filter relation entities
-		if(getAdvancedConfiguration().useDeepParsing() && deepParsingStructure!=null)
+		if(getAdvancedConfiguration().isUseDeepParsing() && deepParsingStructure!=null)
 		{
 			boolean overlap = false;
 			// Point 3
-			if(getAdvancedConfiguration().jumpverbwithCCBefore() && !getAdvancedConfiguration().getCCJumpList().isEmpty())
+			if(getAdvancedConfiguration().isJumpverbwithCCBefore() && !getAdvancedConfiguration().getCcJumpSet().isEmpty())
 			{
 				overlap = junpVerbsWithCCListBefore(verb);
 			}
-			if(!overlap && getAdvancedConfiguration().entitiesAndVerbsInTheSameSentacePhase())
+			if(!overlap && getAdvancedConfiguration().isEntitiesAndVerbsInTheSameSentencePhase())
 			{
 				// Calculate Entities In Verb-Sentence-Range
 				calculeEntitiesINSentenceRange(verb);
 			}
 			// Point 1 - remove entities that has IN ( besides of "by" ) before.
-			if(getAdvancedConfiguration().removeEntitiesThatHasINPropositionBefore() && !getAdvancedConfiguration().getINRemoveList().isEmpty())
+			if(getAdvancedConfiguration().isRemoveEntitiesThatHasINPropositionBefore() && !getAdvancedConfiguration().getiNRemoveSet().isEmpty())
 			{
 				removeEntitiesthathasINProposionBefore();
 			}
 			// Point 7 - remove entities that has IN before "off"( besides of "by" ) before.
-			if(getAdvancedConfiguration().removeEntitiesThatHasINOfPropositionAfter() && !getAdvancedConfiguration().getINRemoveListAfter().isEmpty())
+			if(getAdvancedConfiguration().isRemoveEntitiesThatHasINOfPropositionAfter() && !getAdvancedConfiguration().getInRemoveAfterSet().isEmpty())
 			{
 				removeEntitiesthathasINProposionAfter();
 			}
@@ -72,20 +72,20 @@ public class BinaryBiomedicalVerbModelDeepAnnalysis {
 		this.potencialEntitiesAtLeft = potencialEntitiesAtLeft;
 		this.potencialEntitiesAtRight = potencialEntitiesAtRight;
 		// Using deepParsing to filter relation entities
-		if(getAdvancedConfiguration().useDeepParsing() && deepParsingStructure!=null)
+		if(getAdvancedConfiguration().isUseDeepParsing() && deepParsingStructure!=null)
 		{
-			if(getAdvancedConfiguration().entitiesAndVerbsInTheSameSentacePhase())
+			if(getAdvancedConfiguration().isEntitiesAndVerbsInTheSameSentencePhase())
 			{
 				// Calculate Entities In Verb-Sentence-Range
 				calculeEntitiesINSentenceRange(verb);
 			}
 			// Point 1 - remove entities that has IN ( besides of "by" ) before.
-			if(getAdvancedConfiguration().removeEntitiesThatHasINPropositionBefore() && !getAdvancedConfiguration().getINRemoveList().isEmpty())
+			if(getAdvancedConfiguration().isRemoveEntitiesThatHasINPropositionBefore() && !getAdvancedConfiguration().getiNRemoveSet().isEmpty())
 			{
 				removeEntitiesthathasINProposionBefore();
 			}
 			// Point 7 - remove entities that has IN before "off"( besides of "by" ) before.
-			if(getAdvancedConfiguration().removeEntitiesThatHasINOfPropositionAfter() && !getAdvancedConfiguration().getINRemoveListAfter().isEmpty())
+			if(getAdvancedConfiguration().isRemoveEntitiesThatHasINOfPropositionAfter() && !getAdvancedConfiguration().getInRemoveAfterSet().isEmpty())
 			{
 				removeEntitiesthathasINProposionAfter();
 			}
@@ -104,7 +104,7 @@ public class BinaryBiomedicalVerbModelDeepAnnalysis {
 				IParsingToken afterToken = deepParsingStructure.getNextNode(token);
 				if(afterToken!=null)
 				{
-					if(!(afterToken.getCategory().equals("IN") && getAdvancedConfiguration().getRemoveListAfter().contains(token.getText().toLowerCase()) && getAdvancedConfiguration().getINRemoveListAfter().contains(afterToken.getText().toLowerCase())))
+					if(!(afterToken.getCategory().equals("IN") && getAdvancedConfiguration().getRemoveWordsSetAfter().contains(token.getText().toLowerCase()) && getAdvancedConfiguration().getInRemoveAfterSet().contains(afterToken.getText().toLowerCase())))
 					{
 						potencialEntitiesAtRightDeepFilter.add(potencialEntityAtRight);
 					}
@@ -131,7 +131,7 @@ public class BinaryBiomedicalVerbModelDeepAnnalysis {
 				IParsingToken afterToken = deepParsingStructure.getNextNode(token);
 				if(afterToken!=null)
 				{
-					if(!(afterToken.getCategory().equals("IN") && getAdvancedConfiguration().getRemoveListAfter().contains(token.getText().toLowerCase()) && getAdvancedConfiguration().getINRemoveListAfter().contains(afterToken.getText().toLowerCase())))
+					if(!(afterToken.getCategory().equals("IN") && getAdvancedConfiguration().getRemoveWordsSetAfter().contains(token.getText().toLowerCase()) && getAdvancedConfiguration().getInRemoveAfterSet().contains(afterToken.getText().toLowerCase())))
 					{
 						potencialEntitiesAtLeftDeepFilter.add(potencialEntityAtLeft);
 					}
@@ -154,7 +154,7 @@ public class BinaryBiomedicalVerbModelDeepAnnalysis {
 		IParsingToken token = deepParsingStructure.getParsingNode(verb.getStartOffset()-deepParsingStructure.getStartOffset(), verb.getStartOffset()-deepParsingStructure.getStartOffset());
 		IParsingToken previousToken = deepParsingStructure.getPreviousNode(token);
 		boolean overlap = false;
-		if(previousToken.getCategory().equals("CC") && getAdvancedConfiguration().getCCJumpList().contains(previousToken.getText().toLowerCase()))
+		if(previousToken.getCategory().equals("CC") && getAdvancedConfiguration().getCcJumpSet().contains(previousToken.getText().toLowerCase()))
 		{
 			IVerbInfo previousBiomedicalVerb = calculatePreviousBiomedicalVerb(verb);
 			long biomedicalVErbBefore = deepParsingStructure.getStartOffset();
@@ -243,7 +243,7 @@ public class BinaryBiomedicalVerbModelDeepAnnalysis {
 				IParsingToken previousToken = deepParsingStructure.getPreviousNode(token);
 				if(previousToken!=null)
 				{
-					if(!previousToken.getCategory().equals("IN") || !getAdvancedConfiguration().getINRemoveList().contains(previousToken.getText().toLowerCase()))
+					if(!previousToken.getCategory().equals("IN") || !getAdvancedConfiguration().getiNRemoveSet().contains(previousToken.getText().toLowerCase()))
 					{
 						potencialEntitiesAtRightDeepFilter.add(potencialEntityAtRight);
 					}
@@ -270,7 +270,7 @@ public class BinaryBiomedicalVerbModelDeepAnnalysis {
 				IParsingToken previousToken = deepParsingStructure.getPreviousNode(token);
 				if(previousToken!=null)
 				{
-					if(!previousToken.getCategory().equals("IN") || !getAdvancedConfiguration().getINRemoveList().contains(previousToken.getText().toLowerCase()))
+					if(!previousToken.getCategory().equals("IN") || !getAdvancedConfiguration().getiNRemoveSet().contains(previousToken.getText().toLowerCase()))
 					{
 						potencialEntitiesAtLeftDeepFilter.add(potencialEntityAtLeft);
 					}

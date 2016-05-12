@@ -35,7 +35,7 @@ public class RelationModelSimple implements IRelationModel{
 	private IGatePosTagger postagger;
 
 	public RelationModelSimple(IRERelationConfiguration configuration) {
-		this.postagger = configuration.getPOSTaggerEnum().getPOSTagger(configuration.getVerbsFilter(),configuration.getVerbsAddition());
+		this.postagger = configuration.getPosTaggerEnum().getPOSTagger(configuration.getVerbsFilter(),configuration.getVerbsAddition());
 	}
 
 	public Set<String> getRelationTerminations() 

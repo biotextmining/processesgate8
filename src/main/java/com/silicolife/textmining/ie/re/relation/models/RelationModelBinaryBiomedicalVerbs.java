@@ -45,7 +45,7 @@ public class RelationModelBinaryBiomedicalVerbs extends RelationModelBinaryVerbL
 			return  new ArrayList<IEventAnnotation>();
 		List<IVerbInfo> verbsSubSetInfo = filterVerbs(sentenceSintax.getListVerbs());
 		// Remove all verbs that are inside of Parenthesis
-		if(!getAdvancedConfiguration().allowverbswithinParenthesis())
+		if(!getAdvancedConfiguration().isAllowverbswithinParenthesis())
 		{
 			verbsSubSetInfo = removeVerbswithinParenthesis(verbsSubSetInfo,document,sentenceSintax);
 		}
@@ -66,7 +66,7 @@ public class RelationModelBinaryBiomedicalVerbs extends RelationModelBinaryVerbL
 		List<IEventAnnotation> candidateEventAnnotations = new ArrayList<IEventAnnotation>();	
 		ISentenceDeepParsingStructure deepParsingStructure =null;
 		BinaryBiomedicalVerbModelDeepAnnalysis deepAnnalysis = null;
-		if(getAdvancedConfiguration().useDeepParsing())
+		if(getAdvancedConfiguration().isUseDeepParsing())
 		{
 			try {
 				// Get Sentence
@@ -158,7 +158,7 @@ public class RelationModelBinaryBiomedicalVerbs extends RelationModelBinaryVerbL
 				potencialEntitiesAtRight.add(ent);
 			}
 		}
-		if(getAdvancedConfiguration().useDeepParsing() && deepAnnalysis!=null && deepAnnalysis.getSentenceDeepParsingStructure()!=null)
+		if(getAdvancedConfiguration().isUseDeepParsing() && deepAnnalysis!=null && deepAnnalysis.getSentenceDeepParsingStructure()!=null)
 		{
 			deepAnnalysis.executeDeepAnnalysisGeneral(verb,potencialEntitiesAtLeft,potencialEntitiesAtRight);
 			potencialEntitiesAtLeft = deepAnnalysis.getEntitiesAtLeft();
@@ -188,7 +188,7 @@ public class RelationModelBinaryBiomedicalVerbs extends RelationModelBinaryVerbL
 				potencialEntitiesAtRight.add(ent);
 			}
 		}
-		if(getAdvancedConfiguration().useDeepParsing() && deepAnnalysis!=null && deepAnnalysis.getSentenceDeepParsingStructure()!=null)
+		if(getAdvancedConfiguration().isUseDeepParsing() && deepAnnalysis!=null && deepAnnalysis.getSentenceDeepParsingStructure()!=null)
 		{
 			deepAnnalysis.executeDeepAnnalysisGeneral(verb,potencialEntitiesAtLeft,potencialEntitiesAtRight);
 			potencialEntitiesAtLeft = deepAnnalysis.getEntitiesAtLeft();
@@ -230,7 +230,7 @@ public class RelationModelBinaryBiomedicalVerbs extends RelationModelBinaryVerbL
 				potencialEntitiesAtRight.add(ent);
 			}
 		}
-		if(getAdvancedConfiguration().useDeepParsing() && deepAnnalysis!=null && deepAnnalysis.getSentenceDeepParsingStructure()!=null)
+		if(getAdvancedConfiguration().isUseDeepParsing() && deepAnnalysis!=null && deepAnnalysis.getSentenceDeepParsingStructure()!=null)
 		{
 			deepAnnalysis.executeDeepAnnalysisForFirstVerb(verb,potencialEntitiesAtLeft,potencialEntitiesAtRight);
 			potencialEntitiesAtLeft = deepAnnalysis.getEntitiesAtLeft();
@@ -257,7 +257,7 @@ public class RelationModelBinaryBiomedicalVerbs extends RelationModelBinaryVerbL
 				potencialEntitiesAtRight.add(ent);
 			}
 		}
-		if(getAdvancedConfiguration().useDeepParsing() && deepAnnalysis!=null && deepAnnalysis.getSentenceDeepParsingStructure()!=null)
+		if(getAdvancedConfiguration().isUseDeepParsing() && deepAnnalysis!=null && deepAnnalysis.getSentenceDeepParsingStructure()!=null)
 		{
 			deepAnnalysis.executeDeepAnnalysisForUniqueVerb(verb,potencialEntitiesAtLeft,potencialEntitiesAtRight);
 			potencialEntitiesAtLeft = deepAnnalysis.getEntitiesAtLeft();

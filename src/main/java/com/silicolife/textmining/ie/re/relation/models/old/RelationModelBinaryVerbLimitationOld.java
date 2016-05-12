@@ -122,15 +122,15 @@ public class RelationModelBinaryVerbLimitationOld extends RelationModelVerbLimit
 		eventProperties.setPolarity(polarity);			
 		SortedSet<IEntityAnnotation> setOfEntitiesAnnotations = new TreeSet<IEntityAnnotation>();
 		SortedSet<IEntityAnnotation> setOfRightAnnotations = new TreeSet<IEntityAnnotation>();
-		if(getAdvancedConfiguration()!=null && getAdvancedConfiguration().usingOnlyVerbNearestEntities())
+		if(getAdvancedConfiguration()!=null && getAdvancedConfiguration().isUsingOnlyVerbNearestEntities())
 		{
 			processindOnlyNearestEntities(verb, startPosition, endPosition,keySetEnt, treeEntitiesPositions, leftentities, rightentities,setOfEntitiesAnnotations, setOfRightAnnotations);
 		}
-		else if(getAdvancedConfiguration()!=null && getAdvancedConfiguration().usingOnlyEntitiesNearestVerb())
+		else if(getAdvancedConfiguration()!=null && getAdvancedConfiguration().isUsingOnlyEntitiesNearestVerb())
 		{
 			processingEntitiesNearestToVerb(verb, startPosition, endPosition, keySetEnt,treeEntitiesPositions, leftentities, rightentities,setOfEntitiesAnnotations, setOfRightAnnotations,verbClassidfication);
 		}
-		else if(getAdvancedConfiguration()!=null && getAdvancedConfiguration().usingVerbEntitiesDistance() && getAdvancedConfiguration().getVerbEntitieMaxDistance() > 0)
+		else if(getAdvancedConfiguration()!=null && getAdvancedConfiguration().isUsingVerbEntitiesDistance() && getAdvancedConfiguration().getVerbEntitieMaxDistance() > 0)
 		{
 			processindEntitiesWithMaxVerbDistance(document,verb, startPosition, endPosition, keySetEnt,treeEntitiesPositions, leftentities, rightentities,setOfEntitiesAnnotations, setOfRightAnnotations,getAdvancedConfiguration().getVerbEntitieMaxDistance());
 		}

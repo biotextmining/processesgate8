@@ -82,15 +82,15 @@ public class RelationsExtraction implements IREProcess{
 	private static Properties gerateProperties(IRERelationConfiguration configuration) {
 		Properties prop = new Properties();
 		prop.putAll(configuration.getRelationModelEnum().getRelationModel(configuration).getProperties());
-		prop.put(GlobalNames.taggerName,String.valueOf(configuration.getPOSTaggerEnum().toString()));
-		prop.put(GlobalNames.entityBasedProcess,String.valueOf(configuration.getIEProcess().getID()));
+		prop.put(GlobalNames.taggerName,String.valueOf(configuration.getPosTaggerEnum().toString()));
+		prop.put(GlobalNames.entityBasedProcess,String.valueOf(configuration.getEntityBasedProcess().getID()));
 		prop.put(GlobalNames.relationModel,configuration.getRelationModelEnum().toString());
-		prop.putAll(configuration.getPOSTaggerEnum().getPOSTagger(configuration.getVerbsFilter(), configuration.getVerbsAddition()).getProperties());
-		if(configuration.getIEProcess().getProperties().containsKey(GlobalNames.normalization))
+		prop.putAll(configuration.getPosTaggerEnum().getPOSTagger(configuration.getVerbsFilter(), configuration.getVerbsAddition()).getProperties());
+		if(configuration.getEntityBasedProcess().getProperties().containsKey(GlobalNames.normalization))
 		{
-			if(Boolean.valueOf(configuration.getIEProcess().getProperties().getProperty(GlobalNames.normalization)))
+			if(Boolean.valueOf(configuration.getEntityBasedProcess().getProperties().getProperty(GlobalNames.normalization)))
 			{
-				prop.put(GlobalNames.normalization, configuration.getIEProcess().getProperties().getProperty(GlobalNames.normalization));
+				prop.put(GlobalNames.normalization, configuration.getEntityBasedProcess().getProperties().getProperty(GlobalNames.normalization));
 			}
 		}
 		if(configuration.getRelationModelEnum().getRelationModel(configuration).getDescription().equals("Binary Selected Verbs Only"))
@@ -102,15 +102,15 @@ public class RelationsExtraction implements IREProcess{
 		IRERelationAdvancedConfiguration advancedConfiguration = configuration.getAdvancedConfiguration();
 		if(advancedConfiguration!=null)
 		{
-			if(advancedConfiguration.usingOnlyVerbNearestEntities())
+			if(advancedConfiguration.isUsingOnlyVerbNearestEntities())
 			{
 				prop.put(RERelationNames.usingOnlyVerbNearestEntities,"true");
 			}
-			else if(advancedConfiguration.usingOnlyEntitiesNearestVerb())
+			else if(advancedConfiguration.isUsingOnlyEntitiesNearestVerb())
 			{
 				prop.put(RERelationNames.usingOnlyEntitiesNearestVerb,"true");
 			}
-			else if(advancedConfiguration.usingVerbEntitiesDistance())
+			else if(advancedConfiguration.isUsingVerbEntitiesDistance())
 			{
 				if(advancedConfiguration.getVerbEntitieMaxDistance()>0)
 				{
@@ -138,7 +138,7 @@ public class RelationsExtraction implements IREProcess{
 				reConfiguration.getProcessNotes(), ProcessTypeImpl.getREProcessType(), relationProcessType, gerateProperties(reConfiguration));
 		InitConfiguration.getDataAccess().createIEProcess(reProcess);	
 		IRelationModel relationModel = reConfiguration.getRelationModelEnum().getRelationModel(reConfiguration);
-		posTagger = reConfiguration.getPOSTaggerEnum().getPOSTagger(reConfiguration.getVerbsFilter(),reConfiguration.getVerbsAddition());
+		posTagger = reConfiguration.getPosTaggerEnum().getPOSTagger(reConfiguration.getVerbsFilter(),reConfiguration.getVerbsAddition());
 		IIEProcess processToRetriveMC = reConfiguration.getManualCurationFromOtherProcess();
 		IREProcessReport report = new REProcessReportImpl(relationName, reProcess,reProcess,processToRetriveMC != null);
 		long startTime = GregorianCalendar.getInstance().getTimeInMillis();
@@ -235,7 +235,7 @@ public class RelationsExtraction implements IREProcess{
 				long documentEndOffset = new Long(docLimits.get(documentID).getY());
 				IPublication doc = configuration.getCorpus().getArticlesCorpus().getDocument(documentID);
 				IAnnotatedDocument annotDoc = new AnnotatedDocumentImpl(doc,process, configuration.getCorpus());
-				IAnnotatedDocument annotDocSourceNER = new AnnotatedDocumentImpl(doc,configuration.getIEProcess(), configuration.getCorpus());
+				IAnnotatedDocument annotDocSourceNER = new AnnotatedDocumentImpl(doc,configuration.getEntityBasedProcess(), configuration.getCorpus());
 				List<GenericPairImpl<Long, Long>> sentencesLimits = POSTaggerHelp.getGateDocumentSentencelimits(posTagger.getGateDoc(),documentStartOffset,documentEndOffset);	
 				List<IEntityAnnotation> allDoucmentSemanticLayer = annotDocSourceNER.getEntitiesAnnotations();
 				// NER Manual Curation

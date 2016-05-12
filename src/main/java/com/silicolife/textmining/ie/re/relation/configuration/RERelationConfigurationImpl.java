@@ -4,7 +4,10 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.SortedSet;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.silicolife.textmining.core.datastructures.process.re.REConfigurationImpl;
+import com.silicolife.textmining.core.datastructures.resources.lexiacalwords.LexicalWordsImpl;
 import com.silicolife.textmining.core.interfaces.core.document.corpus.ICorpus;
 import com.silicolife.textmining.core.interfaces.process.IE.IIEProcess;
 import com.silicolife.textmining.core.interfaces.process.IE.re.IRelationsType;
@@ -13,83 +16,113 @@ import com.silicolife.textmining.ie.re.relation.RelationsExtraction;
 import com.silicolife.textmining.ie.re.relation.datastructures.GatePOSTaggerEnum;
 import com.silicolife.textmining.ie.re.relation.models.RelationsModelEnem;
 
-public class RERelationConfiguration extends REConfigurationImpl implements IRERelationConfiguration{
+public class RERelationConfigurationImpl extends REConfigurationImpl implements IRERelationConfiguration{
 	
-	public static String reRelationUID = "re.relation";
+	public static final  String reRelationUID = "re.relation";
 
 
-	private GatePOSTaggerEnum posTagger;
-	private RelationsModelEnem relationModel;
-	private ILexicalWords verbFilter;
-	private ILexicalWords verbAdittion;
-	private ILexicalWords verbclues;
+	private GatePOSTaggerEnum posTaggerEnum;
+	private RelationsModelEnem relationModelEnum;
+	private ILexicalWords verbsFilter;
+	private ILexicalWords verbsAddition;
+	private ILexicalWords verbsClues;
 	private IRERelationAdvancedConfiguration advancedConfiguration;
 	
-	public RERelationConfiguration(ICorpus corpus, IIEProcess entityProcess,boolean useManualCurationFromOtherProcess,IIEProcess manualCurationFromOtherProcess,
-			GatePOSTaggerEnum posTagger,RelationsModelEnem relationModel,
+	public RERelationConfigurationImpl()
+	{
+		super();
+	}
+	
+	public RERelationConfigurationImpl(ICorpus corpus, IIEProcess entityProcess,boolean useManualCurationFromOtherProcess,IIEProcess manualCurationFromOtherProcess,
+			GatePOSTaggerEnum posTaggerEnum,RelationsModelEnem relationModelEnum,
 			ILexicalWords verbFilter,ILexicalWords verbAdittion,ILexicalWords verbClues,IRERelationAdvancedConfiguration advancedConfiguration) {
 		super(RelationsExtraction.relationName,corpus, entityProcess,useManualCurationFromOtherProcess,manualCurationFromOtherProcess);
-		this.posTagger = posTagger;
-		this.relationModel = relationModel;
-		this.verbFilter = verbFilter;
-		this.verbAdittion = verbAdittion;
-		this.verbclues = verbClues;
+		this.posTaggerEnum = posTaggerEnum;
+		this.relationModelEnum = relationModelEnum;
+		this.verbsFilter = verbFilter;
+		this.verbsAddition = verbAdittion;
+		this.verbsClues = verbClues;
 		this.advancedConfiguration = advancedConfiguration;
 	}
 
 	@Override
-	public GatePOSTaggerEnum getPOSTaggerEnum() {
-		return posTagger;
+	public GatePOSTaggerEnum getPosTaggerEnum() {
+		return posTaggerEnum;
+	}
+	
+	public void setPosTaggerEnum(GatePOSTaggerEnum posTaggerEnum) {
+		this.posTaggerEnum = posTaggerEnum;
 	}
 
 	@Override
 	public RelationsModelEnem getRelationModelEnum() {
-		return relationModel;
+		return relationModelEnum;
+	}
+	
+	public void setRelationModelEnum(RelationsModelEnem relationModelEnum) {
+		this.relationModelEnum = relationModelEnum;
 	}
 
 	@Override
+	@JsonDeserialize(as=LexicalWordsImpl.class)
 	public ILexicalWords getVerbsFilter() {
-		return verbFilter;
+		return verbsFilter;
+	}
+	
+
+	public void setVerbsFilter(ILexicalWords verbsFilter) {
+		this.verbsFilter = verbsFilter;
 	}
 
 	@Override
 	public ILexicalWords getVerbsAddition() {
-		return verbAdittion;
+		return verbsAddition;
+	}
+
+	public void setVerbsAddition(ILexicalWords verbsAddition) {
+		this.verbsAddition = verbsAddition;
 	}
 
 	@Override
+	@JsonDeserialize(as=RERelationAdvancedConfigurationImpl.class)
 	public IRERelationAdvancedConfiguration getAdvancedConfiguration() {
 		return advancedConfiguration;
 	}
 
+	public void setAdvancedConfiguration(
+			IRERelationAdvancedConfiguration advancedConfiguration) {
+		this.advancedConfiguration = advancedConfiguration;
+	}
+
 	@Override
+	@JsonIgnore
 	public Map<String, String> getREProperties() {
 		Map<String, String> properties = new HashMap<String, String>();
-		properties.put(RERelationDefaultSettings.POSTAGGER, posTagger.getPOSTagger(verbFilter,verbAdittion).getUID());
-		properties.put(RERelationDefaultSettings.MODEL, relationModel.getRelationModel(this).getUID());
+		properties.put(RERelationDefaultSettings.POSTAGGER, posTaggerEnum.getPOSTagger(verbsFilter,verbsAddition).getUID());
+		properties.put(RERelationDefaultSettings.MODEL, relationModelEnum.getRelationModel(this).getUID());
 		long verbfilterID = 0;
-		if(verbFilter!=null)
+		if(verbsFilter!=null)
 		{
-			verbfilterID = verbFilter.getId();
+			verbfilterID = verbsFilter.getId();
 		}
 		properties.put(RERelationDefaultSettings.VERB_FILTER, String.valueOf(verbfilterID !=0));
 		properties.put(RERelationDefaultSettings.VERB_FILTER_LEXICAL_WORDS_ID, String.valueOf(verbfilterID));
 		long verbAddiction = 0;
-		if(verbAdittion!=null)
+		if(verbsAddition!=null)
 		{
-			verbAddiction = verbAdittion.getId();
+			verbAddiction = verbsAddition.getId();
 		}
 		long verbCluesID = 0;
-		if(this.verbclues!=null)
+		if(this.verbsClues!=null)
 		{
-			verbCluesID = verbclues.getId();
+			verbCluesID = verbsClues.getId();
 		}
 		properties.put(RERelationDefaultSettings.BIOMEDICAL_VERB_MODEL, String.valueOf(verbCluesID));
 		properties.put(RERelationDefaultSettings.VERB_ADDITION, String.valueOf(verbAddiction !=0));
 		properties.put(RERelationDefaultSettings.VERB_ADDITION_LEXICAL_WORDS_ID, String.valueOf(verbAddiction));
 		properties.put(RERelationDefaultSettings.ADVANCED_VERB_ENTITES_MAX_DISTANCE, String.valueOf(0));
-		properties.put(RERelationDefaultSettings.ADVANCED_ONLY_USE_ENTITY_TO_NEAREST_VERB, String.valueOf(getAdvancedConfiguration().usingOnlyVerbNearestEntities()));
-		properties.put(RERelationDefaultSettings.ADVANCED_ONLY_NEAREST_VERB_ENTITIES, String.valueOf(getAdvancedConfiguration().usingOnlyEntitiesNearestVerb()));
+		properties.put(RERelationDefaultSettings.ADVANCED_ONLY_USE_ENTITY_TO_NEAREST_VERB, String.valueOf(getAdvancedConfiguration().isUsingOnlyVerbNearestEntities()));
+		properties.put(RERelationDefaultSettings.ADVANCED_ONLY_NEAREST_VERB_ENTITIES, String.valueOf(getAdvancedConfiguration().isUsingOnlyEntitiesNearestVerb()));
 		properties.put(RERelationDefaultSettings.ADVANCED_RELATIONS_TYPE, convertShortedRelationTypeIntoString(getAdvancedConfiguration().getRelationsType()));
 		return properties;
 	}
@@ -125,19 +158,19 @@ public class RERelationConfiguration extends REConfigurationImpl implements IRER
 	}
 
 	@Override
+	@JsonDeserialize(as=LexicalWordsImpl.class)
 	public ILexicalWords getVerbsClues() {
-		return verbclues;
+		return verbsClues;
+	}
+
+	public void setVerbsClues(ILexicalWords verbsClues) {
+		this.verbsClues = verbsClues;
 	}
 
 	@Override
 	public String getConfigurationUID() {
-		return RERelationConfiguration.reRelationUID;
+		return RERelationConfigurationImpl.reRelationUID;
 	}
 
-	@Override
-	public void setConfigurationUID(String uid) {
-		RERelationConfiguration.reRelationUID=uid;
-		
-	}
 
 }

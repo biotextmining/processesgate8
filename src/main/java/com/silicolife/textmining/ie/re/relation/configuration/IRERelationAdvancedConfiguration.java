@@ -3,36 +3,31 @@ package com.silicolife.textmining.ie.re.relation.configuration;
 import java.util.Set;
 import java.util.SortedSet;
 
-import com.silicolife.textmining.core.interfaces.process.IE.IIEProcess;
 import com.silicolife.textmining.core.interfaces.process.IE.re.IRelationsType;
 
 public interface IRERelationAdvancedConfiguration {
-	
-	// For manual curation
-	public boolean useManualCurationFromOtherProcess();
-	public IIEProcess getManualCurationFromOtherProcess();
-	
-	public boolean usingVerbEntitiesDistance();
+		
+	public boolean isUsingVerbEntitiesDistance();
 	public int getVerbEntitieMaxDistance();
-	public boolean usingOnlyVerbNearestEntities();
+	public boolean isUsingOnlyVerbNearestEntities();
 	public SortedSet<IRelationsType> getRelationsType();
-	public boolean usingOnlyEntitiesNearestVerb();
+	public boolean isUsingOnlyEntitiesNearestVerb();
 	// Remove Synonyms
-	public boolean groupingSynonyms();
+	public boolean isGroupingSynonyms();
 	
 	// Shallow parsing and other
 	public Set<String> getBlackListVerbs();
-	public boolean allowverbswithinParenthesis();
+	public boolean isAllowverbswithinParenthesis();
 	
 	// Deep Parsing
-	public boolean useDeepParsing();
-	public boolean entitiesAndVerbsInTheSameSentacePhase();
-	public boolean removeEntitiesThatHasINPropositionBefore();
-	public boolean removeEntitiesThatHasINOfPropositionAfter();
-	public Set<String> getINRemoveList();
-	public boolean jumpverbwithCCBefore();
-	public Set<String> getCCJumpList();
-	public Set<String> getINRemoveListAfter();
-	public Set<String> getRemoveListAfter();
+	public boolean isUseDeepParsing();
+	public boolean isEntitiesAndVerbsInTheSameSentencePhase();
+	public boolean isRemoveEntitiesThatHasINPropositionBefore();
+	public boolean isRemoveEntitiesThatHasINOfPropositionAfter();
+	public Set<String> getiNRemoveSet();
+	public boolean isJumpverbwithCCBefore();
+	public Set<String> getCcJumpSet();
+	public Set<String> getInRemoveAfterSet();
+	public Set<String> getRemoveWordsSetAfter();
 
 }

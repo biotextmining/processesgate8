@@ -231,11 +231,11 @@ public class RelationModelVerbLimitation extends RelationModelSimple implements 
 		List<IEntityAnnotation> rightentities=new ArrayList<IEntityAnnotation>();
 		DirectionallyEnum dir = verb.getDirectionality();
 		PolarityEnum polarity = verb.getPolarity();
-		if(getAdvancedConfiguration()!=null && getAdvancedConfiguration().usingOnlyEntitiesNearestVerb())
+		if(getAdvancedConfiguration()!=null && getAdvancedConfiguration().isUsingOnlyEntitiesNearestVerb())
 		{
 			processingEntitiesNearestToVerb(verb,previous,further, leftentities, rightentities,potencialEntitiesAtLeft, potencialEntitiesAtRight,verbClassidfication);
 		}
-		else if(getAdvancedConfiguration()!=null && getAdvancedConfiguration().usingVerbEntitiesDistance() && getAdvancedConfiguration().getVerbEntitieMaxDistance() > 0)
+		else if(getAdvancedConfiguration()!=null && getAdvancedConfiguration().isUsingVerbEntitiesDistance() && getAdvancedConfiguration().getVerbEntitieMaxDistance() > 0)
 		{
 			processindEntitiesWithMaxVerbDistance(document,verb,potencialEntitiesAtLeft,potencialEntitiesAtRight, leftentities, rightentities,getAdvancedConfiguration().getVerbEntitieMaxDistance());
 		}
@@ -251,7 +251,7 @@ public class RelationModelVerbLimitation extends RelationModelSimple implements 
 		eventProperties.setPolarity(polarity);	
 		IEventAnnotation event = new EventAnnotationImpl(verb.getStartOffset(), verb.getEndOffset(),
 				"", leftentities, rightentities, verb.getVerb(),-1,"", eventProperties);
-		if(getAdvancedConfiguration().groupingSynonyms())
+		if(getAdvancedConfiguration().isGroupingSynonyms())
 		{
 			processSynonyms(event,leftentities,rightentities);
 		}
@@ -408,15 +408,15 @@ public class RelationModelVerbLimitation extends RelationModelSimple implements 
 		Properties prop = super.getProperties();
 		if(getAdvancedConfiguration()!=null)
 		{
-			if(getAdvancedConfiguration().usingOnlyVerbNearestEntities())
+			if(getAdvancedConfiguration().isUsingOnlyVerbNearestEntities())
 			{
 				prop.put(RERelationNames.usingOnlyVerbNearestEntities,"true");
 			}
-			else if(getAdvancedConfiguration().usingOnlyEntitiesNearestVerb())
+			else if(getAdvancedConfiguration().isUsingOnlyEntitiesNearestVerb())
 			{
 				prop.put(RERelationNames.usingOnlyEntitiesNearestVerb,"true");
 			}
-			else if(getAdvancedConfiguration().usingVerbEntitiesDistance())
+			else if(getAdvancedConfiguration().isUsingVerbEntitiesDistance())
 			{
 				if(getAdvancedConfiguration().getVerbEntitieMaxDistance()>0)
 				{

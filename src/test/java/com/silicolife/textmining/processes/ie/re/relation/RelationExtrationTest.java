@@ -43,8 +43,8 @@ import com.silicolife.textmining.core.interfaces.resource.lexicalwords.ILexicalW
 import com.silicolife.textmining.ie.re.relation.RelationsExtraction;
 import com.silicolife.textmining.ie.re.relation.configuration.IRERelationAdvancedConfiguration;
 import com.silicolife.textmining.ie.re.relation.configuration.IRERelationConfiguration;
-import com.silicolife.textmining.ie.re.relation.configuration.RERelationAdvancedConfiguration;
-import com.silicolife.textmining.ie.re.relation.configuration.RERelationConfiguration;
+import com.silicolife.textmining.ie.re.relation.configuration.RERelationAdvancedConfigurationImpl;
+import com.silicolife.textmining.ie.re.relation.configuration.RERelationConfigurationImpl;
 import com.silicolife.textmining.ie.re.relation.datastructures.GatePOSTaggerEnum;
 import com.silicolife.textmining.ie.re.relation.models.RelationsModelEnem;
 import com.silicolife.textmining.processes.DatabaseConnectionInit;
@@ -80,11 +80,11 @@ public class RelationExtrationTest{
 		int verbEntitieMaxDistance = 10;
 		SortedSet<IRelationsType> relationsType = null;
 		boolean groupingSynonyms = true;
-		IRERelationAdvancedConfiguration advancedConfiguration = new RERelationAdvancedConfiguration(usingOnlyVerbNearestEntities, usingOnlyEntitiesNearestVerb, verbEntitieMaxDistance, groupingSynonyms , relationsType,verbClues , useManualCurationFromOtherProcess, manualCurationFromOtherProcess);
+		IRERelationAdvancedConfiguration advancedConfiguration = new RERelationAdvancedConfigurationImpl(usingOnlyVerbNearestEntities, usingOnlyEntitiesNearestVerb, verbEntitieMaxDistance, groupingSynonyms , relationsType,verbClues );
 		GatePOSTaggerEnum posTagger = GatePOSTaggerEnum.LingPipe_POS;
 		ILexicalWords verbCluesAdittion = null;
 		RelationsModelEnem relationModel = RelationsModelEnem.Binary_Biomedical_Verbs;
-		IRERelationConfiguration configuration = new RERelationConfiguration(corpus, entityProcess, useManualCurationFromOtherProcess, manualCurationFromOtherProcess, posTagger, relationModel , verbFilter, verbCluesAdittion, verbClues, advancedConfiguration);
+		IRERelationConfiguration configuration = new RERelationConfigurationImpl(corpus, entityProcess, useManualCurationFromOtherProcess, manualCurationFromOtherProcess, posTagger, relationModel , verbFilter, verbCluesAdittion, verbClues, advancedConfiguration);
 		RelationsExtraction relation = new RelationsExtraction();
 		IREProcessReport report = relation.executeRE(configuration);
 		System.out.println(report.getNumberOFEntities());
