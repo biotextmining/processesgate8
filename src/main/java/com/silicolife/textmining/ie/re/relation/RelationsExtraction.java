@@ -136,7 +136,8 @@ public class RelationsExtraction implements IREProcess{
 		IRERelationConfiguration reConfiguration = (IRERelationConfiguration) configuration;
 		IIEProcess reProcess = new IEProcessImpl(reConfiguration.getCorpus(), relationName+" "+Utils.SimpleDataFormat.format(new Date()),
 				reConfiguration.getProcessNotes(), ProcessTypeImpl.getREProcessType(), relationProcessType, gerateProperties(reConfiguration));
-		InitConfiguration.getDataAccess().createIEProcess(reProcess);	
+		InitConfiguration.getDataAccess().createIEProcess(reProcess);
+		InitConfiguration.getDataAccess().registerCorpusProcess(reConfiguration.getCorpus(), reProcess);
 		IRelationModel relationModel = reConfiguration.getRelationModelEnum().getRelationModel(reConfiguration);
 		posTagger = reConfiguration.getPosTaggerEnum().getPOSTagger(reConfiguration.getVerbsFilter(),reConfiguration.getVerbsAddition());
 		IIEProcess processToRetriveMC = reConfiguration.getManualCurationFromOtherProcess();

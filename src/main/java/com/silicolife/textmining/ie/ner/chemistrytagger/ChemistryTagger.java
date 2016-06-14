@@ -93,6 +93,7 @@ public class ChemistryTagger implements INERProcess{
 		INERChemistryTaggerConfiguration chimistryTaggerConfiguration = (INERChemistryTaggerConfiguration) configuration;
 		IIEProcess runProcess = getIEProcess(chimistryTaggerConfiguration);
 		InitConfiguration.getDataAccess().createIEProcess(runProcess);
+		InitConfiguration.getDataAccess().registerCorpusProcess(configuration.getCorpus(), runProcess);
 		GateInit();
 		INERProcessReport report = new NERProcessReportImpl(LanguageProperties.getLanguageStream("pt.uminho.anote2.nergate.chemistry.report.title"),runProcess);
 		int step = 0;
