@@ -1,12 +1,5 @@
 package com.silicolife.textmining.corpus.loaders;
 
-import gate.Annotation;
-import gate.AnnotationSet;
-import gate.Document;
-import gate.creole.ResourceInstantiationException;
-import gate.util.GateException;
-import gate.util.InvalidOffsetException;
-
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -24,7 +17,6 @@ import com.silicolife.textmining.core.datastructures.documents.AnnotatedDocument
 import com.silicolife.textmining.core.datastructures.documents.PublicationImpl;
 import com.silicolife.textmining.core.datastructures.general.AnoteClass;
 import com.silicolife.textmining.core.datastructures.general.ClassPropertiesManagement;
-import com.silicolife.textmining.core.datastructures.textprocessing.NormalizationForm;
 import com.silicolife.textmining.core.datastructures.utils.FileHandling;
 import com.silicolife.textmining.core.interfaces.core.annotation.IEntityAnnotation;
 import com.silicolife.textmining.core.interfaces.core.corpora.loaders.ICorpusEntityLoader;
@@ -37,6 +29,13 @@ import com.silicolife.textmining.core.interfaces.core.document.structure.IPublic
 import com.silicolife.textmining.core.interfaces.core.general.classe.IAnoteClass;
 import com.silicolife.wrappergate.GateCorpusReaderLoader;
 import com.silicolife.wrappergate.GateInit;
+
+import gate.Annotation;
+import gate.AnnotationSet;
+import gate.Document;
+import gate.creole.ResourceInstantiationException;
+import gate.util.GateException;
+import gate.util.InvalidOffsetException;
 
 public class AIMEDProteinCorpusLoader implements ICorpusEntityLoader{
 
@@ -136,8 +135,7 @@ public class AIMEDProteinCorpusLoader implements ICorpusEntityLoader{
 			start = annot.getStartNode().getOffset();
 			end = annot.getEndNode().getOffset();
 			String value =gateDoc.getContent().getContent(start, end).toString();
-			String annotationValueNormalization = NormalizationForm.getNormalizationForm(value);
-			IEntityAnnotation entity = new EntityAnnotationImpl(start, end,klass,null, value, annotationValueNormalization, null);
+			IEntityAnnotation entity = new EntityAnnotationImpl(start, end,klass,null, value, false, null);
 			entities.add(entity);
 		}
 		return entities;

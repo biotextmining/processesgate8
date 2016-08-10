@@ -267,7 +267,7 @@ public class ChemistryTagger implements INERProcess{
 			if(end-start<TableAnnotation.maxAnnotaionElementSize && start>=startDoc && end <= endDoc)
 			{
 				String value= gateDocument.getContent().getContent(start, end).toString();
-				IEntityAnnotation entity = new EntityAnnotationImpl(start-startDoc, end-startDoc, klass  ,null, value, NormalizationForm.getNormalizationForm(value), null);
+				IEntityAnnotation entity = new EntityAnnotationImpl(start-startDoc, end-startDoc, klass  ,null, value, false, null);
 				AnnotationPosition position = new AnnotationPosition(Integer.parseInt(String.valueOf(start-startDoc)), Integer.parseInt(String.valueOf(end-startDoc)));
 				annotPos.addAnnotationWhitConflicts(position, entity);
 			}

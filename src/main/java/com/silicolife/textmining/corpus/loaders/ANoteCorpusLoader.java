@@ -143,10 +143,9 @@ public class ANoteCorpusLoader implements ICorpusEntityLoader{
 			long start = annot.getStartNode().getOffset();
 			long end = annot.getEndNode().getOffset();
 			String value=gateDoc.getContent().getContent(start, end).toString();
-			String annotationValueNormalization = NormalizationForm.getNormalizationForm(value);
 			IAnoteClass klassToAdd = new AnoteClass(annot.getFeatures().get("class").toString());
 			IAnoteClass klass = ClassPropertiesManagement.getClassIDOrinsertIfNotExist(klassToAdd);
-			IEntityAnnotation entity = new EntityAnnotationImpl(start, end,klass,null, value, annotationValueNormalization, null);
+			IEntityAnnotation entity = new EntityAnnotationImpl(start, end,klass,null, value, false, null);
 			entityList.add(entity);
 		}
 		return entityList;

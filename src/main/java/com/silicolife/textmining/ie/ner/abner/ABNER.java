@@ -226,7 +226,7 @@ public class ABNER implements INERProcess{
 					String value = gateDocument.getContent().getContent(start, end).toString();
 					String classe = (String) annot.getFeatures().get("type");
 					IAnoteClass klass = new AnoteClass(classe);
-					IEntityAnnotation entity = new EntityAnnotationImpl(start-startDoc, end-startDoc, klass, null,value, NormalizationForm.getNormalizationForm(value),null);
+					IEntityAnnotation entity = new EntityAnnotationImpl(start-startDoc, end-startDoc, klass, null,value, false,null);
 					AnnotationPosition position = new AnnotationPosition(Integer.parseInt(String.valueOf(start-startDoc)), Integer.parseInt(String.valueOf(end-startDoc)));
 					annotPos.addAnnotationWhitConflicts(position, entity);
 				}

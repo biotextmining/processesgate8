@@ -484,7 +484,7 @@ public class GeniaEventCorpusLoader implements ICorpusEventAnnotationLoader{
 			offsetFinalDif = endEntity-start; 
 			IAnoteClass klassToAdd = new AnoteClass(terms[i][3]);
 			IAnoteClass klass = ClassPropertiesManagement.getClassIDOrinsertIfNotExist(klassToAdd);
-			IEntityAnnotation e = new EntityAnnotationImpl(sentenceIndex+offsetDif-error, sentenceIndex+offsetFinalDif-error, klass,null, terms[i][1], NormalizationForm.getNormalizationForm(terms[i][1]), null);
+			IEntityAnnotation e = new EntityAnnotationImpl(sentenceIndex+offsetDif-error, sentenceIndex+offsetFinalDif-error, klass,null, terms[i][1], false, null);
 			this.EntityIDEntity.put(terms[i][2],e);
 		}
 		return terms;
