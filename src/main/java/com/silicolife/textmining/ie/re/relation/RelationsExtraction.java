@@ -83,7 +83,7 @@ public class RelationsExtraction implements IREProcess{
 		Properties prop = new Properties();
 		prop.putAll(configuration.getRelationModelEnum().getRelationModel(configuration).getProperties());
 		prop.put(GlobalNames.taggerName,String.valueOf(configuration.getPosTaggerEnum().toString()));
-		prop.put(GlobalNames.entityBasedProcess,String.valueOf(configuration.getEntityBasedProcess().getID()));
+		prop.put(GlobalNames.entityBasedProcess,String.valueOf(configuration.getEntityBasedProcess().getId()));
 		prop.put(GlobalNames.relationModel,configuration.getRelationModelEnum().toString());
 		prop.putAll(configuration.getPosTaggerEnum().getPOSTagger(configuration.getVerbsFilter(), configuration.getVerbsAddition()).getProperties());
 		if(configuration.getEntityBasedProcess().getProperties().containsKey(GlobalNames.normalization))
