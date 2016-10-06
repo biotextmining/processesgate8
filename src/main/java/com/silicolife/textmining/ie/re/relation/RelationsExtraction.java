@@ -623,7 +623,7 @@ public class RelationsExtraction implements IREProcess{
 						{
 							IAnoteClass newClass = ClassPropertiesManagement.getClassIDClassName(newClassName);
 							// Update Memory entity
-							entAnnot.setClass(newClass);
+							entAnnot.setClassAnnotation(newClass);
 							report.getNERSchemachemaWithManualCurationReport().addEditChanged(annotationLog);
 						}
 						else
