@@ -8,7 +8,15 @@
   <packaging>jar</packaging>
 
   <name>processesgate8</name>
-  <url>http://maven.apache.org</url>
+  <url>http://anote-project.org</url>
+
+    <licenses>
+        <license>
+            <name>LGPLv3</name>
+            <url>https://www.gnu.org/licenses/lgpl-3.0.en.html</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
