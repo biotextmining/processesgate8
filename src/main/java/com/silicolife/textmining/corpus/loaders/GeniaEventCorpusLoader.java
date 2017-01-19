@@ -1,12 +1,5 @@
 package com.silicolife.textmining.corpus.loaders;
 
-import gate.Annotation;
-import gate.AnnotationSet;
-import gate.Document;
-import gate.creole.ResourceInstantiationException;
-import gate.util.GateException;
-import gate.util.InvalidOffsetException;
-
 import java.io.File;
 import java.io.IOException;
 import java.sql.SQLException;
@@ -39,7 +32,6 @@ import com.silicolife.textmining.core.datastructures.documents.PublicationExtern
 import com.silicolife.textmining.core.datastructures.documents.PublicationImpl;
 import com.silicolife.textmining.core.datastructures.general.AnoteClass;
 import com.silicolife.textmining.core.datastructures.general.ClassPropertiesManagement;
-import com.silicolife.textmining.core.datastructures.textprocessing.NormalizationForm;
 import com.silicolife.textmining.core.datastructures.utils.GenericPairComparable;
 import com.silicolife.textmining.core.datastructures.utils.GenericPairImpl;
 import com.silicolife.textmining.core.datastructures.utils.GenericTriple;
@@ -57,6 +49,13 @@ import com.silicolife.textmining.core.interfaces.core.general.classe.IAnoteClass
 import com.silicolife.textmining.core.interfaces.core.utils.IGenericPair;
 import com.silicolife.wrappergate.GateCorpusReaderLoader;
 import com.silicolife.wrappergate.GateInit;
+
+import gate.Annotation;
+import gate.AnnotationSet;
+import gate.Document;
+import gate.creole.ResourceInstantiationException;
+import gate.util.GateException;
+import gate.util.InvalidOffsetException;
 
 public class GeniaEventCorpusLoader implements ICorpusEventAnnotationLoader{
 	
