@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -62,7 +61,7 @@ public class AIMEDProteinCorpusLoader implements ICorpusEntityLoader{
 		{
 			try {
 				GateInit.getInstance().init();
-				Set<String> listFiles = getFilesList(fileOrDirectory);
+				List<String> listFiles = getFilesList(fileOrDirectory);
 				setCorpusSize(listFiles.size());
 				for(File file:fileOrDirectory.listFiles())
 				{
@@ -151,8 +150,8 @@ public class AIMEDProteinCorpusLoader implements ICorpusEntityLoader{
 		return GateCorpusReaderLoader.getGeneralArticleInfo(gateDoc, annotSetOriginal,"ArticleTitle");
 	}
 
-	private Set<String> getFilesList(File filepath) throws IOException {
-		Set<String> files = new HashSet<String>();
+	private List<String> getFilesList(File filepath) throws IOException {
+		List<String> files = new ArrayList<String>();
 		File filePath = new File(filepath.getAbsolutePath()+fileCorpusCheck);
 		files = FileHandling.getFileLinesContent(filePath);
 		return files;		
