@@ -226,7 +226,7 @@ public class RelationModelBinaryVerbLimitationOld extends RelationModelVerbLimit
 						rightList.add(right);
 						List<IEntityAnnotation> leftList = new ArrayList<>();
 						leftList.add(left);
-						event = new EventAnnotationImpl(verb.getStartOffset(), verb.getEndOffset(),AnnotationType.re.name(), leftList, rightList , verb.getVerb(),-1,"", eventProperties);
+						event = new EventAnnotationImpl(verb.getStartOffset(), verb.getEndOffset(),AnnotationType.re.name(), leftList, rightList , verb.getVerb(),eventProperties,false);
 						relations.add(event);
 					}
 				}
@@ -252,7 +252,7 @@ public class RelationModelBinaryVerbLimitationOld extends RelationModelVerbLimit
 					List<IEntityAnnotation> leftList = new ArrayList<>();
 					leftList.add(left);
 					event = new EventAnnotationImpl(verb.getStartOffset(), verb.getEndOffset(),
-							"", leftList, rightList, verb.getVerb(),-1,"", eventProperties);
+							"", leftList, rightList, verb.getVerb(),eventProperties,false);
 					relations.add(event);
 				}
 			}

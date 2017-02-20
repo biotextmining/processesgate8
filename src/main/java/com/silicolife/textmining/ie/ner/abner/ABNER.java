@@ -1,16 +1,5 @@
 package com.silicolife.textmining.ie.ner.abner;
 
-import gate.Annotation;
-import gate.AnnotationSet;
-import gate.Document;
-import gate.Factory;
-import gate.FeatureMap;
-import gate.abner.AbnerTagger;
-import gate.creole.ExecutionException;
-import gate.creole.ResourceInstantiationException;
-import gate.util.GateException;
-import gate.util.InvalidOffsetException;
-
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -38,7 +27,6 @@ import com.silicolife.textmining.core.datastructures.process.IEProcessImpl;
 import com.silicolife.textmining.core.datastructures.process.ProcessOriginImpl;
 import com.silicolife.textmining.core.datastructures.process.ProcessTypeImpl;
 import com.silicolife.textmining.core.datastructures.report.processes.NERProcessReportImpl;
-import com.silicolife.textmining.core.datastructures.textprocessing.NormalizationForm;
 import com.silicolife.textmining.core.datastructures.utils.FileHandling;
 import com.silicolife.textmining.core.datastructures.utils.GenerateRandomId;
 import com.silicolife.textmining.core.datastructures.utils.GenericPairImpl;
@@ -62,6 +50,17 @@ import com.silicolife.textmining.core.interfaces.process.IE.INERProcess;
 import com.silicolife.textmining.core.interfaces.process.IE.ner.INERConfiguration;
 import com.silicolife.textmining.ie.ner.abner.configuration.INERAbnerConfiguration;
 import com.silicolife.wrappergate.GateInit;
+
+import gate.Annotation;
+import gate.AnnotationSet;
+import gate.Document;
+import gate.Factory;
+import gate.FeatureMap;
+import gate.abner.AbnerTagger;
+import gate.creole.ExecutionException;
+import gate.creole.ResourceInstantiationException;
+import gate.util.GateException;
+import gate.util.InvalidOffsetException;
 
 public class ABNER implements INERProcess{
 
@@ -226,7 +225,7 @@ public class ABNER implements INERProcess{
 					String value = gateDocument.getContent().getContent(start, end).toString();
 					String classe = (String) annot.getFeatures().get("type");
 					IAnoteClass klass = new AnoteClass(classe);
-					IEntityAnnotation entity = new EntityAnnotationImpl(start-startDoc, end-startDoc, klass, null,value, false,null);
+					IEntityAnnotation entity = new EntityAnnotationImpl(start-startDoc, end-startDoc, klass, null,value, false,false,null);
 					AnnotationPosition position = new AnnotationPosition(Integer.parseInt(String.valueOf(start-startDoc)), Integer.parseInt(String.valueOf(end-startDoc)));
 					annotPos.addAnnotationWhitConflicts(position, entity);
 				}

@@ -250,7 +250,7 @@ public class RelationModelVerbLimitation extends RelationModelSimple implements 
 		eventProperties.setLemma(lemma);
 		eventProperties.setPolarity(polarity);	
 		IEventAnnotation event = new EventAnnotationImpl(verb.getStartOffset(), verb.getEndOffset(),
-				"", leftentities, rightentities, verb.getVerb(),-1,"", eventProperties);
+				"", leftentities, rightentities, verb.getVerb(), eventProperties,false);
 		if(getAdvancedConfiguration().isGroupingSynonyms())
 		{
 			processSynonyms(event,leftentities,rightentities);

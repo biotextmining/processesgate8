@@ -1,12 +1,5 @@
 package com.silicolife.textmining.corpus.loaders;
 
-import gate.Annotation;
-import gate.AnnotationSet;
-import gate.Document;
-import gate.creole.ResourceInstantiationException;
-import gate.util.GateException;
-import gate.util.InvalidOffsetException;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -42,8 +35,15 @@ import com.silicolife.textmining.core.interfaces.core.document.IPublicationExter
 import com.silicolife.textmining.core.interfaces.core.document.labels.IPublicationLabel;
 import com.silicolife.textmining.core.interfaces.core.document.structure.IPublicationField;
 import com.silicolife.textmining.core.interfaces.core.general.classe.IAnoteClass;
-import com.silicolife.wrappergate.GateInit;
 import com.silicolife.wrappergate.GateCorpusReaderLoader;
+import com.silicolife.wrappergate.GateInit;
+
+import gate.Annotation;
+import gate.AnnotationSet;
+import gate.Document;
+import gate.creole.ResourceInstantiationException;
+import gate.util.GateException;
+import gate.util.InvalidOffsetException;
 
 public class ANoteCorpusLoader implements ICorpusEntityLoader{
 
@@ -145,7 +145,7 @@ public class ANoteCorpusLoader implements ICorpusEntityLoader{
 			String value=gateDoc.getContent().getContent(start, end).toString();
 			IAnoteClass klassToAdd = new AnoteClass(annot.getFeatures().get("class").toString());
 			IAnoteClass klass = ClassPropertiesManagement.getClassIDOrinsertIfNotExist(klassToAdd);
-			IEntityAnnotation entity = new EntityAnnotationImpl(start, end,klass,null, value, false, null);
+			IEntityAnnotation entity = new EntityAnnotationImpl(start, end,klass,null, value, false,true, null);
 			entityList.add(entity);
 		}
 		return entityList;

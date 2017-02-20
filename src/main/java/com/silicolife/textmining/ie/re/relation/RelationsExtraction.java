@@ -1,7 +1,5 @@
 package com.silicolife.textmining.ie.re.relation;
 
-import gate.util.GateException;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -58,6 +56,8 @@ import com.silicolife.textmining.ie.re.relation.configuration.IRERelationConfigu
 import com.silicolife.textmining.ie.re.relation.configuration.RERelationNames;
 import com.silicolife.textmining.ie.re.relation.datastructures.POSTaggerHelp;
 import com.silicolife.wrappergate.IGatePosTagger;
+
+import gate.util.GateException;
 
 
 public class RelationsExtraction implements IREProcess{
@@ -328,7 +328,7 @@ public class RelationsExtraction implements IREProcess{
 					{		
 						eventToEdit = new EventAnnotationImpl(oldID, oldRelationWithEntities.getStartOffset(), oldRelationWithEntities.getEndOffset(), AnnotationType.re.name(),
 								oldRelationWithEntities.getEntitiesAtLeft(),
-								oldRelationWithEntities.getEntitiesAtRight(), oldRelationWithEntities.getEventClue(), -1, "", oldRelationWithEntities.getEventProperties(),true);
+								oldRelationWithEntities.getEntitiesAtRight(), oldRelationWithEntities.getEventClue(),oldRelationWithEntities.getEventProperties(),true,true);
 						
 						report.getRESchemachemaWithManualCurationReport().addChangedEvent(annotationLog);
 						annotations.getEventRelationAnnotationIDEventAnnotation().put(oldRelation.getId(), eventToEdit);
@@ -388,7 +388,7 @@ public class RelationsExtraction implements IREProcess{
 			}
 		}
 		IEventAnnotation result = new EventAnnotationImpl(eventUpdated.getStartOffset(), eventUpdated.getEndOffset(), AnnotationType.re.name(),
-				entitiesAtLeft,entitiesAtRight, eventUpdated.getEventClue(), -1, "", eventUpdated.getEventProperties());
+				entitiesAtLeft,entitiesAtRight, eventUpdated.getEventClue(), eventUpdated.getEventProperties(),true);
 		return result;
 	}
 	
@@ -459,7 +459,7 @@ public class RelationsExtraction implements IREProcess{
 			}
 		}	
 		IEventAnnotation event = new EventAnnotationImpl(eventToAdd.getStartOffset(), eventToAdd.getEndOffset(),
-				AnnotationType.re.name(), leftEntities, rightEntities, eventToAdd.getEventClue(), -1, "", eventToAdd.getEventProperties());
+				AnnotationType.re.name(), leftEntities, rightEntities, eventToAdd.getEventClue(),eventToAdd.getEventProperties(),true);
 		return event;
 	}
 	private void removeEventRElationAnnotation(IAnnotationLog annotationLog, List<IEventAnnotation> relations, AnnotationPositions annotPositions,

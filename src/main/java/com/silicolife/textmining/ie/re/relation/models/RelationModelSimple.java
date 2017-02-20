@@ -100,7 +100,7 @@ public class RelationModelSimple implements IRelationModel{
 			eventProperties.setLemma(lemma);
 			eventProperties.setPolarity(polarity);		
 			IEventAnnotation event = new EventAnnotationImpl(treeverbPositions.get(verbPosition).getStartOffset(), treeverbPositions.get(verbPosition).getEndOffset(),
-					"", leftentities, rightentities, verb,-1,"", eventProperties);
+					"", leftentities, rightentities, verb,eventProperties,false);
 			if(leftentities.size()+rightentities.size()>1)
 			{
 				// Remove binary relation with the same entity in right and left

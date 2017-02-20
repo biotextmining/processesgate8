@@ -8,7 +8,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
-import java.util.Set;
 import java.util.TreeMap;
 
 import com.silicolife.textmining.core.datastructures.annotation.ner.EntityAnnotationImpl;
@@ -134,7 +133,7 @@ public class AIMEDProteinCorpusLoader implements ICorpusEntityLoader{
 			start = annot.getStartNode().getOffset();
 			end = annot.getEndNode().getOffset();
 			String value =gateDoc.getContent().getContent(start, end).toString();
-			IEntityAnnotation entity = new EntityAnnotationImpl(start, end,klass,null, value, false, null);
+			IEntityAnnotation entity = new EntityAnnotationImpl(start, end,klass,null, value, false,true, null);
 			entities.add(entity);
 		}
 		return entities;

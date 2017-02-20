@@ -230,14 +230,13 @@ public class GeniaEventCorpusLoader implements ICorpusEventAnnotationLoader{
 			String verb = hashEventdetails.get(eventID).getX();
 			verbPositionStart =  hashEventdetails.get(eventID).getZ();
 			verbPositionEnd =  hashEventdetails.get(eventID).getZ()+verb.length();
-			String ontologyRelationClass = hashEventdetails.get(eventID).getY();
 			List<String> cause = hasheventwhitentities.get(eventID).getX();
 			List<String> them = hasheventwhitentities.get(eventID).getY();
 			List<IEntityAnnotation> causeEntities = getEntitiesList(cause,hasheventwhitentities,sentenceIndex,startsentenceEvent,hashentities);
 			List<IEntityAnnotation> themEntities = getEntitiesList(them,hasheventwhitentities,sentenceIndex,startsentenceEvent,hashentities);
 			IGenericPair<List<IEntityAnnotation>,List<IEntityAnnotation>> entitiesResults = getEntitiesPosition(sentenceIndex+verbPositionStart-error, causeEntities, themEntities);
 			if(!(entitiesResults.getX().isEmpty() && entitiesResults.getY().isEmpty())){
-				IEventAnnotation ev = new EventAnnotationImpl(sentenceIndex+verbPositionStart-error,sentenceIndex+verbPositionEnd-error, AnnotationType.re.name(), entitiesResults.getX(), entitiesResults.getY(), verb, 0, ontologyRelationClass, eventProperties);
+				IEventAnnotation ev = new EventAnnotationImpl(sentenceIndex+verbPositionStart-error,sentenceIndex+verbPositionEnd-error, AnnotationType.re.name(), entitiesResults.getX(), entitiesResults.getY(), verb, eventProperties,true);
 				this.events.add(ev);
 			}
 		}		
@@ -483,7 +482,7 @@ public class GeniaEventCorpusLoader implements ICorpusEventAnnotationLoader{
 			offsetFinalDif = endEntity-start; 
 			IAnoteClass klassToAdd = new AnoteClass(terms[i][3]);
 			IAnoteClass klass = ClassPropertiesManagement.getClassIDOrinsertIfNotExist(klassToAdd);
-			IEntityAnnotation e = new EntityAnnotationImpl(sentenceIndex+offsetDif-error, sentenceIndex+offsetFinalDif-error, klass,null, terms[i][1], false, null);
+			IEntityAnnotation e = new EntityAnnotationImpl(sentenceIndex+offsetDif-error, sentenceIndex+offsetFinalDif-error, klass,null, terms[i][1], false,true, null);
 			this.EntityIDEntity.put(terms[i][2],e);
 		}
 		return terms;
