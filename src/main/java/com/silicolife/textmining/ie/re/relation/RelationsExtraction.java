@@ -25,9 +25,7 @@ import com.silicolife.textmining.core.datastructures.documents.AnnotatedDocument
 import com.silicolife.textmining.core.datastructures.exceptions.process.InvalidConfigurationException;
 import com.silicolife.textmining.core.datastructures.general.ClassPropertiesManagement;
 import com.silicolife.textmining.core.datastructures.init.InitConfiguration;
-import com.silicolife.textmining.core.datastructures.process.IEProcessImpl;
 import com.silicolife.textmining.core.datastructures.process.ProcessOriginImpl;
-import com.silicolife.textmining.core.datastructures.process.ProcessTypeImpl;
 import com.silicolife.textmining.core.datastructures.report.processes.REProcessReportImpl;
 import com.silicolife.textmining.core.datastructures.utils.FileHandling;
 import com.silicolife.textmining.core.datastructures.utils.GenerateRandomId;
@@ -134,8 +132,7 @@ public class RelationsExtraction implements IREProcess{
 	public IREProcessReport executeRE(IREConfiguration configuration) throws  ANoteException, InvalidConfigurationException {
 		validateConfiguration(configuration);
 		IRERelationConfiguration reConfiguration = (IRERelationConfiguration) configuration;
-		IIEProcess reProcess = new IEProcessImpl(reConfiguration.getCorpus(), relationName+" "+Utils.SimpleDataFormat.format(new Date()),
-				reConfiguration.getProcessNotes(), ProcessTypeImpl.getREProcessType(), relationProcessType, gerateProperties(reConfiguration));
+		IIEProcess reProcess = buildprocess(configuration, reConfiguration);
 		InitConfiguration.getDataAccess().createIEProcess(reProcess);
 		InitConfiguration.getDataAccess().registerCorpusProcess(reConfiguration.getCorpus(), reProcess);
 		IRelationModel relationModel = reConfiguration.getRelationModelEnum().getRelationModel(reConfiguration);
@@ -151,6 +148,13 @@ public class RelationsExtraction implements IREProcess{
 		long end = GregorianCalendar.getInstance().getTimeInMillis();
 		report.setTime(end-startTime);
 		return report;
+	}
+
+	private IIEProcess buildprocess(IREConfiguration configuration, IRERelationConfiguration reConfiguration) {
+		IIEProcess reProcess = configuration.getIEProcess();
+		reProcess.setName(relationName+" "+Utils.SimpleDataFormat.format(new Date()));
+		reProcess.setProperties(gerateProperties(reConfiguration));
+		return reProcess;
 	}
 
 	protected void relationProcessing(IRelationModel relationModel,IIEProcess reProcess,IRERelationConfiguration configuration,IREProcessReport report) throws IOException, GateException, ANoteException {

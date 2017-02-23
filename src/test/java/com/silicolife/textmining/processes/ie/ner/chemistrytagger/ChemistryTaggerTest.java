@@ -1,7 +1,6 @@
 package com.silicolife.textmining.processes.ie.ner.chemistrytagger;
 
 import static org.junit.Assert.assertTrue;
-import gate.util.GateException;
 
 import java.io.IOException;
 
@@ -9,6 +8,7 @@ import org.junit.Test;
 
 import com.silicolife.textmining.core.datastructures.exceptions.process.InvalidConfigurationException;
 import com.silicolife.textmining.core.datastructures.init.exception.InvalidDatabaseAccess;
+import com.silicolife.textmining.core.datastructures.process.ProcessRunStatusConfigurationEnum;
 import com.silicolife.textmining.core.interfaces.core.dataaccess.exception.ANoteException;
 import com.silicolife.textmining.core.interfaces.core.document.corpus.ICorpus;
 import com.silicolife.textmining.core.interfaces.core.report.processes.INERProcessReport;
@@ -19,6 +19,8 @@ import com.silicolife.textmining.ie.ner.chemistrytagger.configuration.NERChemist
 import com.silicolife.textmining.processes.DatabaseConnectionInit;
 import com.silicolife.textmining.processes.ie.ner.abner.AbnerTaggerTest;
 import com.silicolife.wrappergate.GateInit;
+
+import gate.util.GateException;
 
 public class ChemistryTaggerTest{
 	
@@ -32,7 +34,7 @@ public class ChemistryTaggerTest{
 		boolean chemistryCompound = true;
 		boolean chemistryElements= true;;
 		boolean chemistrylIon= true;;
-		INERChemistryTaggerConfiguration configuration = new NERChemistryTaggerConfiguration(corpus, chemistryElements, chemistryCompound, chemistrylIon);
+		INERChemistryTaggerConfiguration configuration = new NERChemistryTaggerConfiguration(corpus,ProcessRunStatusConfigurationEnum.createnew, chemistryElements, chemistryCompound, chemistrylIon);
 		ChemistryTagger chemTagger = new ChemistryTagger();
 		INERProcessReport report = chemTagger.executeCorpusNER(configuration);
 		assertTrue(report.isFinishing());

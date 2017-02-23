@@ -23,9 +23,7 @@ import com.silicolife.textmining.core.datastructures.exceptions.process.InvalidC
 import com.silicolife.textmining.core.datastructures.general.AnoteClass;
 import com.silicolife.textmining.core.datastructures.init.InitConfiguration;
 import com.silicolife.textmining.core.datastructures.language.LanguageProperties;
-import com.silicolife.textmining.core.datastructures.process.IEProcessImpl;
 import com.silicolife.textmining.core.datastructures.process.ProcessOriginImpl;
-import com.silicolife.textmining.core.datastructures.process.ProcessTypeImpl;
 import com.silicolife.textmining.core.datastructures.report.processes.NERProcessReportImpl;
 import com.silicolife.textmining.core.datastructures.utils.FileHandling;
 import com.silicolife.textmining.core.datastructures.utils.GenerateRandomId;
@@ -157,9 +155,10 @@ public class ChemistryTagger implements INERProcess{
 
 	private IIEProcess getIEProcess(INERChemistryTaggerConfiguration configuration) {
 		String description = ChemistryTagger.nerChemistryTagger  + " " +Utils.SimpleDataFormat.format(new Date());
-		String notes = configuration.getProcessNotes();
 		Properties properties = gerateProperties(configuration);
-		IIEProcess runProcess = new IEProcessImpl(configuration.getCorpus(), description, notes, ProcessTypeImpl.getNERProcessType(), nerChemistryOrigin, properties);
+		IIEProcess runProcess = configuration.getIEProcess();
+		runProcess.setName(description);
+		runProcess.setProperties(properties);
 		return runProcess;
 	}
 

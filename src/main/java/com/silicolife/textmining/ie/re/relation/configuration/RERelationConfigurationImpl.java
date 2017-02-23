@@ -1,13 +1,19 @@
 package com.silicolife.textmining.ie.re.relation.configuration;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Properties;
 import java.util.SortedSet;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.silicolife.textmining.core.datastructures.process.IEProcessImpl;
+import com.silicolife.textmining.core.datastructures.process.ProcessRunStatusConfigurationEnum;
+import com.silicolife.textmining.core.datastructures.process.ProcessTypeImpl;
 import com.silicolife.textmining.core.datastructures.process.re.REConfigurationImpl;
 import com.silicolife.textmining.core.datastructures.resources.lexiacalwords.LexicalWordsImpl;
+import com.silicolife.textmining.core.datastructures.utils.Utils;
 import com.silicolife.textmining.core.interfaces.core.document.corpus.ICorpus;
 import com.silicolife.textmining.core.interfaces.process.IE.IIEProcess;
 import com.silicolife.textmining.core.interfaces.process.IE.re.IRelationsType;
@@ -33,16 +39,25 @@ public class RERelationConfigurationImpl extends REConfigurationImpl implements 
 		super();
 	}
 	
-	public RERelationConfigurationImpl(ICorpus corpus, IIEProcess entityProcess,boolean useManualCurationFromOtherProcess,IIEProcess manualCurationFromOtherProcess,
+	public RERelationConfigurationImpl(ICorpus corpus,ProcessRunStatusConfigurationEnum processRunStatusConfigurationEnum,IIEProcess entityProcess,boolean useManualCurationFromOtherProcess,IIEProcess manualCurationFromOtherProcess,
 			GatePOSTaggerEnum posTaggerEnum,RelationsModelEnem relationModelEnum,
 			ILexicalWords verbFilter,ILexicalWords verbAdittion,ILexicalWords verbClues,IRERelationAdvancedConfiguration advancedConfiguration) {
-		super(RelationsExtraction.relationName,corpus, entityProcess,useManualCurationFromOtherProcess,manualCurationFromOtherProcess);
+		super(RelationsExtraction.relationName,corpus,build(corpus),processRunStatusConfigurationEnum, entityProcess,useManualCurationFromOtherProcess,manualCurationFromOtherProcess);
 		this.posTaggerEnum = posTaggerEnum;
 		this.relationModelEnum = relationModelEnum;
 		this.verbsFilter = verbFilter;
 		this.verbsAddition = verbAdittion;
 		this.verbsClues = verbClues;
 		this.advancedConfiguration = advancedConfiguration;
+	}
+	
+	private static IIEProcess build(ICorpus corpus)
+	{
+		String name = RelationsExtraction.relationName+" "+Utils.SimpleDataFormat.format(new Date());
+		String notes = new String();
+		Properties properties = new Properties();
+		IIEProcess reProcess = new IEProcessImpl(corpus, name,notes,ProcessTypeImpl.getREProcessType(), RelationsExtraction.relationProcessType, properties);
+		return reProcess;
 	}
 
 	@Override

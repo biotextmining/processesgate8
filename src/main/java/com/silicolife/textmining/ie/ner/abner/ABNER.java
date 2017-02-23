@@ -23,9 +23,7 @@ import com.silicolife.textmining.core.datastructures.exceptions.process.InvalidC
 import com.silicolife.textmining.core.datastructures.general.AnoteClass;
 import com.silicolife.textmining.core.datastructures.init.InitConfiguration;
 import com.silicolife.textmining.core.datastructures.language.LanguageProperties;
-import com.silicolife.textmining.core.datastructures.process.IEProcessImpl;
 import com.silicolife.textmining.core.datastructures.process.ProcessOriginImpl;
-import com.silicolife.textmining.core.datastructures.process.ProcessTypeImpl;
 import com.silicolife.textmining.core.datastructures.report.processes.NERProcessReportImpl;
 import com.silicolife.textmining.core.datastructures.utils.FileHandling;
 import com.silicolife.textmining.core.datastructures.utils.GenerateRandomId;
@@ -149,10 +147,11 @@ public class ABNER implements INERProcess{
 	private IIEProcess getIEProcess(INERConfiguration configuration,
 			INERAbnerConfiguration abnerConfiguration) {
 		String description = ABNER.nerAbner  + " " +Utils.SimpleDataFormat.format(new Date());
-		String notes = abnerConfiguration.getProcessNotes();
+		IIEProcess process = configuration.getIEProcess();
 		Properties properties = gerateProperties(abnerConfiguration);
-		IIEProcess runProcess = new IEProcessImpl(configuration.getCorpus(), description, notes, ProcessTypeImpl.getNERProcessType(), nerAbnerOrigin, properties);
-		return runProcess;
+		process.setName(description);
+		process.setProperties(properties);
+		return process;
 	}
 
 	private static Properties gerateProperties(INERAbnerConfiguration abnerConfiguration) {

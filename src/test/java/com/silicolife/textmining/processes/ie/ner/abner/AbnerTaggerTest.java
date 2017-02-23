@@ -1,7 +1,6 @@
 package com.silicolife.textmining.processes.ie.ner.abner;
 
 import static org.junit.Assert.assertTrue;
-import gate.util.GateException;
 
 import java.io.IOException;
 import java.util.HashSet;
@@ -14,6 +13,7 @@ import org.junit.Test;
 import com.silicolife.textmining.core.datastructures.corpora.CorpusCreateConfigurationImpl;
 import com.silicolife.textmining.core.datastructures.exceptions.process.InvalidConfigurationException;
 import com.silicolife.textmining.core.datastructures.init.exception.InvalidDatabaseAccess;
+import com.silicolife.textmining.core.datastructures.process.ProcessRunStatusConfigurationEnum;
 import com.silicolife.textmining.core.interfaces.core.corpora.ICorpusCreateConfiguration;
 import com.silicolife.textmining.core.interfaces.core.dataaccess.exception.ANoteException;
 import com.silicolife.textmining.core.interfaces.core.document.IPublication;
@@ -34,6 +34,8 @@ import com.silicolife.textmining.processes.ir.pubmed.PubMedSearch;
 import com.silicolife.textmining.processes.ir.pubmed.configuration.IRPubmedSearchConfigurationImpl;
 import com.silicolife.wrappergate.GateInit;
 
+import gate.util.GateException;
+
 public class AbnerTaggerTest {
 	
 	@Test
@@ -44,7 +46,7 @@ public class AbnerTaggerTest {
 		ICorpus corpus = createCorpus().getCorpus();		
 		ABNERTrainingModel model = ABNERTrainingModel.NLPBA;
 //		ABNERTrainingModel model = ABNERTrainingModel.BIOCREATIVE;
-		INERAbnerConfiguration configuration = new NERAbnerConfiguration(corpus, model);
+		INERAbnerConfiguration configuration = new NERAbnerConfiguration(corpus, model,ProcessRunStatusConfigurationEnum.createnew);
 		System.out.println("Abner Tagger");
 		ABNER abner = new ABNER();
 		INERProcessReport report = abner.executeCorpusNER(configuration );

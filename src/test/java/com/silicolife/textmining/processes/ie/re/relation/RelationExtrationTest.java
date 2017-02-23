@@ -1,7 +1,6 @@
 package com.silicolife.textmining.processes.ie.re.relation;
 
 import static org.junit.Assert.assertTrue;
-import gate.util.GateException;
 
 import java.io.File;
 import java.io.IOException;
@@ -16,6 +15,7 @@ import org.junit.Test;
 import com.silicolife.textmining.core.datastructures.exceptions.process.InvalidConfigurationException;
 import com.silicolife.textmining.core.datastructures.init.InitConfiguration;
 import com.silicolife.textmining.core.datastructures.init.exception.InvalidDatabaseAccess;
+import com.silicolife.textmining.core.datastructures.process.ProcessRunStatusConfigurationEnum;
 import com.silicolife.textmining.core.datastructures.process.ner.NERCaseSensativeEnum;
 import com.silicolife.textmining.core.datastructures.process.ner.ResourcesToNerAnote;
 import com.silicolife.textmining.core.datastructures.resources.dictionary.loaders.DictionaryImpl;
@@ -58,6 +58,8 @@ import com.silicolife.textmining.processes.resources.dictionary.loaders.byocyc.B
 import com.silicolife.textmining.processes.resources.lexicalwords.csvlader.LexicalWordsCSVLoader;
 import com.silicolife.wrappergate.GateInit;
 
+import gate.util.GateException;
+
 
 public class RelationExtrationTest{
 	
@@ -84,7 +86,7 @@ public class RelationExtrationTest{
 		GatePOSTaggerEnum posTagger = GatePOSTaggerEnum.LingPipe_POS;
 		ILexicalWords verbCluesAdittion = null;
 		RelationsModelEnem relationModel = RelationsModelEnem.Binary_Biomedical_Verbs;
-		IRERelationConfiguration configuration = new RERelationConfigurationImpl(corpus, entityProcess, useManualCurationFromOtherProcess, manualCurationFromOtherProcess, posTagger, relationModel , verbFilter, verbCluesAdittion, verbClues, advancedConfiguration);
+		IRERelationConfiguration configuration = new RERelationConfigurationImpl(corpus,ProcessRunStatusConfigurationEnum.createnew, entityProcess, useManualCurationFromOtherProcess, manualCurationFromOtherProcess, posTagger, relationModel , verbFilter, verbCluesAdittion, verbClues, advancedConfiguration);
 		RelationsExtraction relation = new RelationsExtraction();
 		IREProcessReport report = relation.executeRE(configuration);
 		System.out.println(report.getNumberOFEntities());
@@ -106,7 +108,7 @@ public class RelationExtrationTest{
 		int numThreads = 4;
 		boolean usingOtherResourceInfoToImproveRuleAnnotations = false;
 		int sizeOfSmallWordsToBeNotAnnotated = 0;
-		INERLinnaeusConfiguration configurations = new NERLinnaeusConfigurationImpl(corpus, patterns , resourceToNER, useabreviation , disambiguation , caseSensitive , normalized , numThreads , stopwords , preprocessing , usingOtherResourceInfoToImproveRuleAnnotations,sizeOfSmallWordsToBeNotAnnotated );
+		INERLinnaeusConfiguration configurations = new NERLinnaeusConfigurationImpl(corpus,ProcessRunStatusConfigurationEnum.createnew, patterns , resourceToNER, useabreviation , disambiguation , caseSensitive , normalized , numThreads , stopwords , preprocessing , usingOtherResourceInfoToImproveRuleAnnotations,sizeOfSmallWordsToBeNotAnnotated );
 		LinnaeusTagger linnaues = new LinnaeusTagger( );
 		System.out.println("Execute Linnaeus");
 		INERProcessReport report = linnaues.executeCorpusNER(configurations);
