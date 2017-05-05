@@ -154,6 +154,8 @@ public class RelationsExtraction implements IREProcess{
 		IIEProcess reProcess = configuration.getIEProcess();
 		reProcess.setName(relationName+" "+Utils.SimpleDataFormat.format(new Date()));
 		reProcess.setProperties(gerateProperties(reConfiguration));
+		if(reProcess.getCorpus() == null)
+			reProcess.setCorpus(configuration.getCorpus());
 		return reProcess;
 	}
 
@@ -770,15 +772,15 @@ public class RelationsExtraction implements IREProcess{
 	@JsonIgnore
 	protected void memoryAndProgress(int step, int total) {
 		System.out.println((GlobalOptions.decimalformat.format((double) step / (double) total * 100)) + " %...");
-		System.gc();
-		System.out.println((Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()) / (1024 * 1024) + " MB ");
+//		System.gc();
+//		System.out.println((Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()) / (1024 * 1024) + " MB ");
 	}
 
 	@JsonIgnore
 	protected void memoryAndProgressAndTime(int step, int total, long startTime) {
 		System.out.println((GlobalOptions.decimalformat.format((double) step / (double) total * 100)) + " %...");
-		System.gc();
-		System.out.println((Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()) / (1024 * 1024) + " MB ");
+//		System.gc();
+//		System.out.println((Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()) / (1024 * 1024) + " MB ");
 	}
 
 }
