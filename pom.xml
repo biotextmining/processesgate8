@@ -6,6 +6,7 @@
 	<artifactId>processesgate8</artifactId>
 	<version>1.0.0</version>
 	<packaging>jar</packaging>
+
 	<repositories>
 		<repository>
 			<id>thirdparty</id>
@@ -17,6 +18,8 @@
 
 	<name>processesgate8</name>
 	<url>http://anote-project.org</url>
+	<description>Biomedical Text Mining - Processes Gate8 (dependency)library</description>
+
 
 	<licenses>
 		<license>
@@ -25,6 +28,39 @@
 			<distribution>repo</distribution>
 		</license>
 	</licenses>
+
+	<developers>
+		<developer>
+			<name>Hugo Costa</name>
+			<email>hcosta@silicolife.com</email>
+			<organization>SilicoLife Lda</organization>
+			<organizationUrl>http://www.silicolife.com</organizationUrl>
+		</developer>
+		<developer>
+			<name>Ruben Rodrigues</name>
+			<email>pg25227@alunos.uminho.pt</email>
+			<organization>University of Minho</organization>
+			<organizationUrl>https://www.uminho.pt</organizationUrl>
+		</developer>
+		<developer>
+			<name>Joel Costa</name>
+			<email>jcosta@silicolife.com</email>
+			<organization>SilicoLife Lda</organization>
+			<organizationUrl>http://www.silicolife.com</organizationUrl>
+		</developer>
+		<developer>
+			<name>Tiago Alves</name>
+			<email>tiagopintoalves@outlook.com</email>
+			<organization>University of Minho</organization>
+			<organizationUrl>https://www.uminho.pt</organizationUrl>
+		</developer>
+		<developer>
+			<name>Rafael Carreira</name>
+			<email>rcarreira@silicolife.com</email>
+			<organization>SilicoLife Lda</organization>
+			<organizationUrl>http://www.silicolife.com</organizationUrl>
+		</developer>
+	</developers>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -62,7 +98,6 @@
 		</dependency>
 
 
-
 		<!-- Gate Dependencies -->
 		<dependency>
 			<groupId>de.julielab</groupId>
@@ -95,5 +130,73 @@
 			<version>1.0.0</version>
 		</dependency>
 	</dependencies>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-source-plugin</artifactId>
+				<version>3.0.1</version>
+				<executions>
+					<execution>
+						<id>attach-sources</id>
+						<phase>verify</phase>
+						<goals>
+							<goal>jar-no-fork</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<version>2.10.4</version>
+				<configuration>
+					<additionalparam>-Xdoclint:none</additionalparam>
+					<includeDependencySources>true</includeDependencySources>
+					<dependencySourceIncludes>
+						<dependencySourceInclude>com.silicolife.textmining:*</dependencySourceInclude>
+					</dependencySourceIncludes>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<version>2.9.1</version>
+				<executions>
+					<execution>
+						<id>attach-javadocs</id>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-gpg-plugin</artifactId>
+				<version>1.5</version>
+				<executions>
+					<execution>
+						<id>sign-artifacts</id>
+						<phase>verify</phase>
+						<goals>
+							<goal>sign</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.sonatype.plugins</groupId>
+				<artifactId>nexus-staging-maven-plugin</artifactId>
+				<version>1.6.7</version>
+				<extensions>true</extensions>
+				<configuration>
+					<serverId>ossrh</serverId>
+					<nexusUrl>https://oss.sonatype.org/</nexusUrl>
+					<autoReleaseAfterClose>true</autoReleaseAfterClose>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
 
 </project>
