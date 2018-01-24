@@ -163,7 +163,7 @@ public class GeniaEventCorpusLoader implements ICorpusEventAnnotationLoader{
 		IPublicationExternalSourceLink externalID = new PublicationExternalSourceLinkImpl(pmid, pubmedExternalLink);
 		List<IPublicationExternalSourceLink> publicationExternalIDSource = new ArrayList<>();
 		publicationExternalIDSource.add(externalID);
-		IPublication pub = new PublicationImpl(title, "", "", "", "", "", "", "", "", "", abstractText, "", true, "", "", publicationExternalIDSource, new ArrayList<IPublicationField>(), new ArrayList<IPublicationLabel>());
+		IPublication pub = new PublicationImpl(title, "", "", "", "", "", "", "", "", "", abstractText, "", true, "", "","", publicationExternalIDSource, new ArrayList<IPublicationField>(), new ArrayList<IPublicationLabel>());
 		pub.setFullTextContent(getFulltext());
 		getDocuments().add(pub);
 		processeSentence(annotSetOriginal);

@@ -232,7 +232,7 @@ public class ChemistryTagger implements INERProcess{
 					IPublication document =  new PublicationImpl(docID,
 							"", "", "", "", "",
 							"", "", "", "", "", "",
-							"", false, "", "",
+							"", false, "", "","",
 							new ArrayList<IPublicationExternalSourceLink>(),
 							new ArrayList<IPublicationField>(),
 							new ArrayList<IPublicationLabel>());
