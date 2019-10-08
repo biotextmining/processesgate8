@@ -190,7 +190,7 @@ public class ABNER implements INERProcess{
 					IPublication document =  new PublicationImpl(documentID,
 							"", "", "", "", "",
 							"", "", "", "", "", "",
-							"", false, "", "",
+							"", false, "", "","",
 							new ArrayList<IPublicationExternalSourceLink>(),
 							new ArrayList<IPublicationField>(),
 							new ArrayList<IPublicationLabel>());

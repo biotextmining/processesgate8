@@ -121,7 +121,7 @@ public class ANoteCorpusLoader implements ICorpusEntityLoader{
 			String abstractText = getDocumentAbstract(gateDoc,annotSetOriginal);
 			String journal = getDocumentJournal(gateDoc,annotSetOriginal);
 			String authors = getDocumentAuthors(gateDoc,annotSetOriginal);
-			IPublication pub = new PublicationImpl(title, authors, "", "", "", "", journal, "", "", "", abstractText, "", true, "", "", new ArrayList<IPublicationExternalSourceLink>(), new ArrayList<IPublicationField>(), new ArrayList<IPublicationLabel>());
+			IPublication pub = new PublicationImpl(title, authors, "", "", "", "", journal, "", "", "", abstractText, "", true, "", "","", new ArrayList<IPublicationExternalSourceLink>(), new ArrayList<IPublicationField>(), new ArrayList<IPublicationLabel>());
 			pub.setFullTextContent(fullText);
 			getDocuments().add(pub);
 			List<IEntityAnnotation> entities = getEntities(gateDoc,annotSetOriginal);

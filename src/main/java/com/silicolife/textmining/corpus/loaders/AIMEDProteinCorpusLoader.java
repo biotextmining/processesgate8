@@ -106,7 +106,7 @@ public class AIMEDProteinCorpusLoader implements ICorpusEntityLoader{
 			AnnotationSet annotSetOriginal = gateDoc.getAnnotations("Original markups");	
 			String title = getDocumentTitle(gateDoc,annotSetOriginal);
 			String abstractText = getDocumentAbstract(gateDoc,annotSetOriginal);
-			IPublication pub = new PublicationImpl(title, "AIMED Team", "", "", "", "", "", "", "", "", abstractText, "", false, "", "", new ArrayList<IPublicationExternalSourceLink>() , new ArrayList<IPublicationField>(), new ArrayList<IPublicationLabel>());
+			IPublication pub = new PublicationImpl(title, "AIMED Team", "", "", "", "", "", "", "", "", abstractText, "", false, "", "","", new ArrayList<IPublicationExternalSourceLink>() , new ArrayList<IPublicationField>(), new ArrayList<IPublicationLabel>());
 			getDocuments().add(pub);
 			List<IEntityAnnotation> entities = getEntities(gateDoc,annotSetOriginal);
 			IAnnotatedDocument docResult = new AnnotatedDocumentImpl(pub,null, null, entities);
