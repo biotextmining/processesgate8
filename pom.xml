@@ -20,6 +20,13 @@
 			<distribution>repo</distribution>
 		</license>
 	</licenses>
+	
+	<repositories>
+		<repository>
+			<id>thirdparty</id>
+			<url>http://nexus.bio.di.uminho.pt/content/repositories/thirdparty/</url>
+		</repository>
+	</repositories>
 
 	<developers>
 		<developer>
@@ -172,7 +179,7 @@
 
 	<profiles>
 		<profile>
-			<id>release</id>
+			<id>central-deploy</id>
 			<build>
 				<plugins>
 					<!-- Uncomment when deploy to Mvn Central -->
