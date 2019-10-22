@@ -24,7 +24,7 @@
 	<repositories>
 		<repository>
 			<id>thirdparty</id>
-			<url>http://nexus.bio.di.uminho.pt/content/repositories/thirdparty/</url>
+			<url>https://nexus.bio.di.uminho.pt/content/repositories/thirdparty/</url>
 		</repository>
 	</repositories>
 
@@ -88,7 +88,7 @@
 		<dependency>
 			<groupId>com.silicolife.textmining</groupId>
 			<artifactId>processes</artifactId>
-			<version>1.1.0</version>
+			<version>1.1.1</version>
 		</dependency>
 		<dependency>
 			<groupId>uk.ac.gate</groupId>
